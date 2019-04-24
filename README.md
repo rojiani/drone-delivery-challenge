@@ -8,11 +8,12 @@ The program is written in [Kotlin](https://kotlinlang.org). In case you are not 
 
 Gradle is used as the build system. See Instructions below for how to run the application & its tests.
 
-Libraries used - TODO why selected
+Libraries used:
+
+[Clikt](https://ajalt.github.io/clikt/) - a simple CLI argument parsing library for Kotlin.
 
 ## Instructions ##
 ### Importing into IntelliJ IDEA ###
-
 
 ### Running ###
 To run the application, you must have the following installed:
@@ -49,22 +50,24 @@ Algorithm will always schedule to maximize NPS (not some other metric)
 
 TODO not delaying deliveries already exceeding max. delivery time
 
-**Assumption 1.**
+TODO drone can only carry 1 package, & any single order can be fit completely in package.
+* Note that this isn't realistic. However, perhaps the input (the orders) are not all orders placed, but the subset of orders whose delivery can be fulfilled by drone - i.e., a separate service is used to produce this list of orders. 
+
+**Assumption 1 - Diagram Interpretation.**
 Scaling not as clear & unambiguous as it could be. I'm assuming that in the
 diagram:
 * the first row of numbers (`0, 1, ..., 10`) corresponds to the customer's
 rating for how likely they are to recommend the service.
 * The second row (`10, 9, ..., 1, < 1`) is the delivery time (in hours)
 
-
-**Assumption 2.**
+**Assumption 2 - Score determined solely by delivery time.**
 Following from _Assumption 1_, I'm assuming that the likelihood of recommending is directly correlated with delivery time, and there are no other covariates.
 
 * _Rationale_:
     * This is not particularly realistic. In real life, other factors would influence the customer score. For example, whether the package contents were delivered undamaged, or how the actual delivery time compared to the promised or estimated delivery time.
-    * However, the prompt does not provide any other metrics.
+    * However, the prompt does not provide any other metrics, so there is no way to account for other factors other than estimation. We could make assumptions - perhaps 1 in 250 packages is lost or damaged, for example - but since I don't have the necessary data to make accurate estimates (and in accordance with the KISS principle), I'm going to ignore all variables aside from delivery time.
 
-**Assumption 3.**
+**Assumption 3 - Exact cutoff times.**
 * Unclear what the rating should be for non-integer delivery times.
     * If delivery time is exactly 2 hour, then rating is 8.
     * But if delivery time is 2 hours, 15 mins, does this correspond to 8? Or does it correspond to 7?
@@ -83,12 +86,31 @@ Following from _Assumption 1_, I'm assuming that the likelihood of recommending 
 | Detractor |   `[3.75, ∞)` |     `[225, ∞)` |
 
 
+**Assumption 4 - Next-day Rollover.** 
+* order placed at 9 pm, and will take 2 hours to deliver
+    * drone delivery occurs only between 6 am - 10 pm.
+    * it's conceivable that a drone could start the delivery at 9 pm and travel until 10 pm, and then the following morning travel the remainder from 6-7 am. But that would mean that the drone must land at 10 pm and remain somewhere until the drone delivery window reopens the next day. I would assume people wouldn't be too happy about a drone parking in their front yard overnight, so this strategy would only work if the drone delivery company also had several drone-parking stations. This would significantly complicate the problem, since the scheduler would need to consider paths other than the most direct one to customer, ensure that drone can reach the drone-parking station by cutoff, etc.
+        * This strategy is also likely unrealistic - establishing numerous drone-parking stations would probably face resistance from the town (unless this takes place in the future, & drone stations are a common occurrence that people are used to)
+    * Therefore, if the _full_ trip (from launch facility to customer _and back_) by 10pm, then the delivery will begin the following morning.
+
+**Assumption 5 - Input File.**  
+5A. TODO Doesn't exceed 2GB (`readLines`)
+5B. UTF-8
+
+
 ### Design Decisions/Notes ###
 
+TODO
 * prompt has launch facility in center, but since that could change, designed not
 to rely on that. 
 * Drone speed is 1 vertical or horizontal grid block per minute.
     * diagonal
 
-In problem, town owns 1 drone. This would likely increase.
+TODO In problem, town owns 1 drone. This would likely increase.
 * Operating hours could also change
+
+#### TODO ####
+TODO - remove this section 
+
+TODO - Poll service
+* IRL, scheduler needs to poll some service to get newly placed orders with some frequency.
