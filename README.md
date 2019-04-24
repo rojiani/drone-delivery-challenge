@@ -24,8 +24,9 @@ Navigate to project directory.
 
 A Gradle Wrapper is provided, so that when a task is run with `gradlew`, a version of Gradle (5.4) will be downloaded for you.
 
-Gradle Tasks can be viewed with:  
-`$ ./gradlew tasks`
+TODO:
+`$ ./gradlew run --args="foo --bar"`
+
 
 **NOTE**: For Windows users, use `gradlew.bat` instead of `gradlew`.
 
@@ -94,7 +95,7 @@ Following from _Assumption 1_, I'm assuming that the likelihood of recommending 
     * Therefore, if the _full_ trip (from launch facility to customer _and back_) by 10pm, then the delivery will begin the following morning.
 
 **Assumption 5 - Input File.**  
-5A. TODO Doesn't exceed 2GB (`readLines`)
+5A. TODO Doesn't exceed 2GB (`readLines`). TODO consider `useLines`
 5B. UTF-8
 
 
