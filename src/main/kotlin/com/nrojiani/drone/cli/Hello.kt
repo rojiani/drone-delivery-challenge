@@ -1,15 +1,18 @@
 package com.nrojiani.drone.cli
 
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.parameters.options.default
-import com.github.ajalt.clikt.parameters.options.option
-import com.github.ajalt.clikt.parameters.types.int
+import com.github.ajalt.clikt.parameters.arguments.argument
+import com.github.ajalt.clikt.parameters.types.path
 
 class Hello : CliktCommand() {
-    val count: Int by option(help="Number of greetings").int().default(1)
+    val inputFile by argument().path(
+        exists = true,
+        folderOkay = false,
+        readable = true
+    )
 
     override fun run() {
-        println("run: count = $count")
+        println("run: inputFile = $inputFile")
     }
 }
 
