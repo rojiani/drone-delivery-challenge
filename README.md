@@ -92,6 +92,7 @@ Following from _Assumption 1_, I'm assuming that the likelihood of recommending 
     * it's conceivable that a drone could start the delivery at 9 pm and travel until 10 pm, and then the following morning travel the remainder from 6-7 am. But that would mean that the drone must land at 10 pm and remain somewhere until the drone delivery window reopens the next day. I would assume people wouldn't be too happy about a drone parking in their front yard overnight, so this strategy would only work if the drone delivery company also had several drone-parking stations. This would significantly complicate the problem, since the scheduler would need to consider paths other than the most direct one to customer, ensure that drone can reach the drone-parking station by cutoff, etc.
         * This strategy is also likely unrealistic - establishing numerous drone-parking stations would probably face resistance from the town (unless this takes place in the future, & drone stations are a common occurrence that people are used to)
     * Therefore, if the _full_ trip (from launch facility to customer _and back_) by 10pm, then the delivery will begin the following morning.
+    * This also applies to orders placed after 10pm & before 6am.
 
 **Assumption 5 - Input File.**  
 5A. TODO Doesn't exceed 2GB (`readLines`). TODO consider `useLines`

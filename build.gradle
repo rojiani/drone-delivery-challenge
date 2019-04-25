@@ -41,7 +41,7 @@ compileTestKotlin {
 }
 
 application {
-    mainClassName = 'com.nrojiani.drone.cli.HelloKt'
+    mainClassName = 'com.nrojiani.drone.cli.MainKt'
 }
 
 test {
@@ -62,7 +62,7 @@ idea {
 
 //jar {
 //    manifest {
-//        attributes 'Main-Class': 'com.nrojiani.drone.cli.HelloKt'
+//        attributes 'Main-Class': 'com.nrojiani.drone.cli.MainKt'
 //    }
 //
 //    // This line of code recursively collects and copies all of a project's files
