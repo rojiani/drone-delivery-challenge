@@ -56,6 +56,11 @@ class OrderParserTest {
             parseRawCoordinates("E5N11")
         }
 
+        // Not N|S & E|W
+        assertFailsWith<IllegalArgumentException> {
+            parseRawCoordinates("F5Z11")
+        }
+
         // Trailing space
         assertFailsWith<IllegalArgumentException> {
             parseRawCoordinates("N11W5 ")

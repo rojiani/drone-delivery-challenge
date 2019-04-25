@@ -28,16 +28,16 @@ class CoordinateTest {
 
     @Test
     fun distanceFromOrigin() {
-        assertEquals(1.0, Coordinate(1, 0).distanceFromOrigin(), EPSILON)
-        assertEquals(1.0, Coordinate(0, 1).distanceFromOrigin(), EPSILON)
-        assertEquals(3.0, Coordinate(0, 3).distanceFromOrigin(), EPSILON)
-        assertEquals(sqrt(2.0), Coordinate(1, 1).distanceFromOrigin(), EPSILON)
-        assertEquals(sqrt(58.0), Coordinate(3, 7).distanceFromOrigin(), EPSILON)
+        assertEquals(1.0, Coordinate(1, 0).distanceFromOrigin, EPSILON)
+        assertEquals(1.0, Coordinate(0, 1).distanceFromOrigin, EPSILON)
+        assertEquals(3.0, Coordinate(0, 3).distanceFromOrigin, EPSILON)
+        assertEquals(sqrt(2.0), Coordinate(1, 1).distanceFromOrigin, EPSILON)
+        assertEquals(sqrt(58.0), Coordinate(3, 7).distanceFromOrigin, EPSILON)
 
-        assertEquals(3.0, Coordinate(-3, 0).distanceFromOrigin(), EPSILON)
-        assertEquals(sqrt(97.0), Coordinate(-4, -9).distanceFromOrigin(), EPSILON)
+        assertEquals(3.0, Coordinate(-3, 0).distanceFromOrigin, EPSILON)
+        assertEquals(sqrt(97.0), Coordinate(-4, -9).distanceFromOrigin, EPSILON)
 
-        assertEquals(7.496665925596525, Coordinate(1.2, 7.4).distanceFromOrigin(), EPSILON)
+        assertEquals(7.496665925596525, Coordinate(1.2, 7.4).distanceFromOrigin, EPSILON)
     }
 
     @Test
