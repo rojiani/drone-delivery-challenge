@@ -1,23 +1,17 @@
 package com.nrojiani.drone.cli
 
-import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.parameters.arguments.argument
-import com.github.ajalt.clikt.parameters.types.path
-
-class Hello : CliktCommand() {
-    val inputFile by argument().path(
-        exists = true,
-        folderOkay = false,
-        readable = true
-    )
-
-    override fun run() {
-        println("run: inputFile = $inputFile")
-    }
-}
+import com.nrojiani.drone.io.readFileLines
+import com.xenomachina.argparser.ArgParser
 
 fun main(args: Array<String>) {
     println("main(args: ${args.toList()})")
 
-    Hello().main(args)
+    val parsedArgs: DroneArgs = ArgParser(args).parseInto(::DroneArgs)
+    parsedArgs.run {
+        println("inputFilepath = $inputFilepath")
+        val lines = readFileLines(inputFilepath)
+        println("lines = $lines")
+    }
+
+    // TODO: print output file path
 }

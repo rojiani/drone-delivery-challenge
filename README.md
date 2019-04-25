@@ -10,7 +10,7 @@ Gradle is used as the build system. See Instructions below for how to run the ap
 
 Libraries used:
 
-[Clikt](https://ajalt.github.io/clikt/) - a simple CLI argument parsing library for Kotlin.
+[Kotlin ArgParser](https://github.com/xenomachina/kotlin-argparser) - a simple CLI argument parsing library for Kotlin.
 
 ## Instructions ##
 ### Importing into IntelliJ IDEA ###
@@ -25,8 +25,7 @@ Navigate to project directory.
 A Gradle Wrapper is provided, so that when a task is run with `gradlew`, a version of Gradle (5.4) will be downloaded for you.
 
 TODO:
-`$ ./gradlew run --args="foo --bar"`
-
+`$ ./gradlew run --args="input=<INPUT_FILE_PATH>"`
 
 **NOTE**: For Windows users, use `gradlew.bat` instead of `gradlew`.
 

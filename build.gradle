@@ -27,7 +27,7 @@ repositories {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-    implementation "com.github.ajalt:clikt:$cliktVersion"
+    implementation "com.xenomachina:kotlin-argparser:$kotlinArgParserVersion"
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.jetbrains.kotlin:kotlin-test"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit"
@@ -42,7 +42,6 @@ compileTestKotlin {
 
 application {
     mainClassName = 'com.nrojiani.drone.cli.HelloKt'
-    applicationName = 'hello'
 }
 
 test {
