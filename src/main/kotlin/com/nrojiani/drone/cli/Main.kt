@@ -5,8 +5,11 @@ import com.nrojiani.drone.model.Order
 import com.nrojiani.drone.parser.parseOrders
 import com.xenomachina.argparser.ArgParser
 
+/**
+ * Entry point for application.
+ */
 fun main(args: Array<String>) {
-    val parsedArgs: DroneArgs = ArgParser(args).parseInto(::DroneArgs)
+    val parsedArgs: CommandLineArguments = ArgParser(args).parseInto(::CommandLineArguments)
     parsedArgs.run {
         println("inputFilepath = $inputFilepath")
         val inputLines = readFileLines(inputFilepath)
