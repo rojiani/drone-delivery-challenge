@@ -5,6 +5,7 @@ import com.nrojiani.drone.model.Order
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.format.DateTimeParseException
 
 /**
  * Map each order input line to an [Order] model object.
@@ -34,7 +35,7 @@ internal fun parseOrder(orderInput: String): Order {
  * to a [Coordinate].
  */
 internal fun parseRawCoordinates(rawCoordinates: String): Coordinate =
-    Regex("""(N|S)([0-9]+)(E|W)([0-9]+)""").matchEntire(rawCoordinates)
+    Regex("""([NS])([0-9]+)([EW])([0-9]+)""").matchEntire(rawCoordinates)
         ?.destructured
         ?.let { (latitudeSymbol, latitude, longitudeSymbol, longitude) ->
 
@@ -53,7 +54,6 @@ internal fun parseRawCoordinates(rawCoordinates: String): Coordinate =
             }
 
             return Coordinate(x, y)
-
         } ?: throw IllegalArgumentException("Bad input: $rawCoordinates")
 
 /**

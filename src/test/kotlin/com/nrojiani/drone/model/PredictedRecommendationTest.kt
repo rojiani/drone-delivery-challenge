@@ -1,9 +1,11 @@
 package com.nrojiani.drone.model
 
-import com.nrojiani.drone.model.PredictedRecommendation.*
+import com.nrojiani.drone.model.PredictedRecommendation.PROMOTER
+import com.nrojiani.drone.model.PredictedRecommendation.NEUTRAL
+import com.nrojiani.drone.model.PredictedRecommendation.DETRACTOR
 import org.junit.Test
 
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import java.lang.IllegalArgumentException
 import kotlin.test.assertFailsWith
 

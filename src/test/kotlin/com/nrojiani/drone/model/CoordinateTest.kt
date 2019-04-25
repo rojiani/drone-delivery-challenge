@@ -2,10 +2,9 @@ package com.nrojiani.drone.model
 
 import com.nrojiani.drone.testutils.EPSILON
 import com.nrojiani.drone.testutils.ORIGIN
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlin.math.sqrt
-import kotlin.test.assertEquals
 
 class CoordinateTest {
 

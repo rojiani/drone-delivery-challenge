@@ -12,7 +12,7 @@ enum class PredictedRecommendation(val deliveryTimeRange: IntRange) {
     /** Factory methods */
     companion object {
         fun fromDeliveryTime(minutes: Int): PredictedRecommendation {
-            require(minutes >= 0) { "Invalid delivery time: $minutes (must be >= 0)"}
+            require(minutes >= 0) { "Invalid delivery time: $minutes (must be >= 0)" }
             return values().first { minutes in it.deliveryTimeRange }
         }
 
