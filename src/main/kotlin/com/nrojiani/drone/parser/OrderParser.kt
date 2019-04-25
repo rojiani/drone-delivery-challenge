@@ -1,6 +1,6 @@
 package com.nrojiani.drone.parser
 
-import com.nrojiani.drone.model.GridCoordinate
+import com.nrojiani.drone.model.Coordinate
 import com.nrojiani.drone.model.Order
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -31,9 +31,9 @@ internal fun parseOrder(orderInput: String): Order {
 
 /**
  * Convert the String representation of a customer's grid coordinates ("N15W9")
- * to a [GridCoordinate].
+ * to a [Coordinate].
  */
-internal fun parseRawCoordinates(rawCoordinates: String): GridCoordinate =
+internal fun parseRawCoordinates(rawCoordinates: String): Coordinate =
     Regex("""(N|S)([0-9]+)(E|W)([0-9]+)""").matchEntire(rawCoordinates)
         ?.destructured
         ?.let { (latitudeSymbol, latitude, longitudeSymbol, longitude) ->
@@ -44,15 +44,15 @@ internal fun parseRawCoordinates(rawCoordinates: String): GridCoordinate =
             }
 
             val x = when (longitudeSymbol) {
-                "E" -> longitude.toInt()
-                else -> longitude.toInt() * -1
+                "E" -> longitude.toDouble()
+                else -> longitude.toDouble() * -1
             }
             val y = when (latitudeSymbol) {
-                "N" -> latitude.toInt()
-                else -> latitude.toInt() * -1
+                "N" -> latitude.toDouble()
+                else -> latitude.toDouble() * -1
             }
 
-            return GridCoordinate(x, y)
+            return Coordinate(x, y)
 
         } ?: throw IllegalArgumentException("Bad input: $rawCoordinates")
 

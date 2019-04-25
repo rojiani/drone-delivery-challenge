@@ -1,6 +1,6 @@
 package com.nrojiani.drone.parser
 
-import com.nrojiani.drone.model.GridCoordinate
+import com.nrojiani.drone.model.Coordinate
 import com.nrojiani.drone.model.Order
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -18,12 +18,12 @@ class OrderParserTest {
             listOf(
                 Order(
                     orderId = "WM001",
-                    destination = GridCoordinate(-5, 11),
+                    destination = Coordinate(-5, 11),
                     dateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 11, 50))
                 ),
                 Order(
                     orderId = "WM002",
-                    destination = GridCoordinate(2, -3),
+                    destination = Coordinate(2, -3),
                     dateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 11, 55))
                 )
             ), parseOrders(listOf("WM001 N11W5 05:11:50", "WM002 S3E2 05:11:55"))
@@ -35,7 +35,7 @@ class OrderParserTest {
         assertEquals(
             Order(
                 orderId = "WM001",
-                destination = GridCoordinate(-5, 11),
+                destination = Coordinate(-5, 11),
                 dateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 11, 50))
             ), parseOrder("WM001 N11W5 05:11:50")
         )
@@ -43,10 +43,10 @@ class OrderParserTest {
 
     @Test
     fun parseRawCoordinates() {
-        assertEquals(GridCoordinate(-5, 11), parseRawCoordinates("N11W5"))
-        assertEquals(GridCoordinate(2, -3), parseRawCoordinates("S3E2"))
-        assertEquals(GridCoordinate(50, 7), parseRawCoordinates("N7E50"))
-        assertEquals(GridCoordinate(5, 11), parseRawCoordinates("N11E5"))
+        assertEquals(Coordinate(-5, 11), parseRawCoordinates("N11W5"))
+        assertEquals(Coordinate(2, -3), parseRawCoordinates("S3E2"))
+        assertEquals(Coordinate(50, 7), parseRawCoordinates("N7E50"))
+        assertEquals(Coordinate(5, 11), parseRawCoordinates("N11E5"))
     }
 
     @Test
