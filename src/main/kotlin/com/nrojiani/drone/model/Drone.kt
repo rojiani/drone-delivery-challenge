@@ -2,7 +2,7 @@
 
 package com.nrojiani.drone.model
 
-import com.nrojiani.drone.model.delivery.TimeInterval
+import com.nrojiani.drone.model.delivery.ShortTimeInterval
 import com.nrojiani.drone.model.delivery.SECONDS_PER_MINUTE
 import java.time.LocalTime
 
@@ -15,5 +15,10 @@ const val DRONE_SPEED_BLOCKS_PER_SECOND = DRONE_SPEED_BLOCKS_PER_MIN / SECONDS_P
 @JvmField
 val DRONE_LAUNCH_FACILITY_LOCATION = Coordinate(0, 0)
 
+/** 6am - 10pm */
 @JvmField
-val DRONE_DELIVERY_OPERATING_HOURS = TimeInterval(LocalTime.parse("06:00:00"), LocalTime.parse("22:00:00"))
+val DRONE_DELIVERY_OPERATING_HOURS = ShortTimeInterval(LocalTime.parse("06:00:00"), LocalTime.parse("22:00:00"))
+
+/** 10pm - 6am */
+@JvmField
+val DRONE_DELIVERY_OFF_HOURS = ShortTimeInterval(LocalTime.parse("22:00:00"), LocalTime.parse("06:00:00"))

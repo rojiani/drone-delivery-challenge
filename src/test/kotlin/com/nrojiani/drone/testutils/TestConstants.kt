@@ -37,7 +37,7 @@ val ORDER_2 = Order(
 val ORDER_3 = Order(
     orderId = "WM003",
     destination = Coordinate(x = 50.0, y = 7.0),
-    orderPlacedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(6, 11, 50)),
+    orderPlacedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 31, 50)),
     transitTime = TransitTime(transitTimeToDestination = 3029L)
 )
 
@@ -45,7 +45,7 @@ val ORDER_3 = Order(
 val ORDER_4 = Order(
     orderId = "WM004",
     destination = Coordinate(x = 5.0, y = 11.0),
-    orderPlacedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 31, 50)),
+    orderPlacedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(6, 11, 50)),
     transitTime = TransitTime(transitTimeToDestination = 724L)
 )
 

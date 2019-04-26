@@ -5,16 +5,16 @@ import com.nrojiani.drone.model.Order
 import com.nrojiani.drone.model.delivery.DroneDelivery
 import java.time.LocalDateTime
 
+/**
+ * Schedules deliveries based on distance.
+ */
 class MinTransitTimeDeliveryScheduler : DeliveryScheduler {
     override fun scheduleDeliveries(orders: List<Order>): List<DroneDelivery> {
+        require(orders.all { it.transitTime != null }) { "Orders must have transit times calculated" }
         if (orders.isEmpty()) return emptyList()
 
-        require(orders.all { it.transitTime != null }) { "Orders must have transit times calculated" }
-
         val sortedByTransitTime = ordersSortedByTransitTime(orders)
-
         val date = orders.first().orderPlacedDateTime.toLocalDate()
-
         return schedule(
             sortedByTransitTime, LocalDateTime.of(date, DRONE_DELIVERY_OPERATING_HOURS.start)
         )
@@ -33,17 +33,26 @@ class MinTransitTimeDeliveryScheduler : DeliveryScheduler {
         return orders.sortedWith(comparator)
     }
 
+    /**
+     * Generate list of deliveries with times generated from the order's transit times.
+     * @param sortedOrders orders sorted by distance (increasing)
+     * @param startTime the time the first delivery will depart
+     */
     private fun schedule(sortedOrders: List<Order>, startTime: LocalDateTime): List<DroneDelivery> {
+
+        // TODO - postpone deliveries after 10pm
+
         var time: LocalDateTime = startTime
         return sortedOrders.fold(arrayListOf()) { acc, order ->
             requireNotNull(order.transitTime == null)
 
-            val delivery =
-                DroneDelivery(order, timeOrderDelivered = time.plusSeconds(order.transitTime!!.sourceToDestinationTime))
+            val delivery = DroneDelivery(
+                order,
+                timeOrderDelivered = time.plusSeconds(order.transitTime!!.sourceToDestinationTime)
+            )
             time = delivery.timeDroneReturned
 
             acc.apply { acc.add(delivery) }
         }
     }
-
 }

@@ -1,11 +1,17 @@
 package com.nrojiani.drone.cli
 
+import com.nrojiani.drone.calculator.calculateNPS
 import com.nrojiani.drone.io.output.OutputWriter
 import com.nrojiani.drone.io.parser.parseOrders
 import com.nrojiani.drone.io.readFileLines
+import com.nrojiani.drone.model.DRONE_DELIVERY_OPERATING_HOURS
 import com.nrojiani.drone.model.DRONE_LAUNCH_FACILITY_LOCATION
 import com.nrojiani.drone.model.DRONE_SPEED_BLOCKS_PER_SECOND
 import com.nrojiani.drone.model.Order
+import com.nrojiani.drone.model.PredictedRecommendation
+import com.nrojiani.drone.model.delivery.DroneDelivery
+import com.nrojiani.drone.scheduler.DeliveryTimeCalculator
+import com.nrojiani.drone.scheduler.OperatingHoursDeliveryTimeCalculator
 import com.nrojiani.drone.model.delivery.TransitTime
 import com.nrojiani.drone.model.delivery.TransitTimeCalculator
 import com.nrojiani.drone.scheduler.DeliveryScheduler
@@ -34,6 +40,7 @@ class CommandLineApplication(private val args: Array<String>) : KodeinAware {
     private val transitTimeCalculator: TransitTimeCalculator by instance()
     private val parsedArgs: CommandLineArguments by instance()
     private val scheduler: DeliveryScheduler by instance()
+    private val deliveryTimeCalculator: DeliveryTimeCalculator by instance()
 
     // Dependency Injection
     override val kodein = Kodein {
@@ -48,29 +55,33 @@ class CommandLineApplication(private val args: Array<String>) : KodeinAware {
         bind<DeliveryScheduler>() with singleton {
             MinTransitTimeDeliveryScheduler()
         }
+
+        bind<DeliveryTimeCalculator>() with singleton {
+            OperatingHoursDeliveryTimeCalculator(DRONE_DELIVERY_OPERATING_HOURS)
+        }
     }
 
     /**
      * Entry point for application.
      */
-    fun run() {
-        parsedArgs.run {
-            val orderInputLines = readFileLines(inputFilepath)
-            val orders: List<Order> = parseOrders(orderInputLines)
+    fun run() = parsedArgs.run {
+        val orderInputLines = readFileLines(inputFilepath)
+        val orders: List<Order> = parseOrders(orderInputLines)
 
-            addTransitTimes(orders)
-            println("orders with transit times: $orders")
+        addTransitTimes(orders)
 
-            val deliveries = scheduler.scheduleDeliveries(orders)
-
-            deliveries.forEach { println(it.timeOrderDelivered.toLocalTime()) }
-
-            // TODO - Calculate NPS
-            val nps = Double.POSITIVE_INFINITY
-
-            // Write output file
-            OutputWriter(deliveries, nps).writeOutputFile()
+        val deliveries = scheduler.scheduleDeliveries(orders)
+        val deliveryTimes: Map<DroneDelivery, Long> = deliveries.associateBy(
+            keySelector = { it },
+            valueTransform = { deliveryTimeCalculator.calculate(it) }
+        )
+        val deliveryCategories: Map<DroneDelivery, PredictedRecommendation> = deliveryTimes.mapValues { (_, deliveryTime) ->
+            PredictedRecommendation.fromDeliveryTime(deliveryTime)
         }
+        val nps = calculateNPS(deliveryCategories)
+
+        // Write output file
+        OutputWriter(deliveries, nps).writeOutputFile()
     }
 
     // Set each order's TransitTime

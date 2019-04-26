@@ -19,14 +19,13 @@ class OutputWriter(
             "${it.order.orderId} ${it.timeDroneDeparted.formattedTime}"
         }.joinToString("\n")
 
-        // TODO
-         val npsLine = "NPS ${nps.formatToNDecimalPlaces(2)}"
-         val fileText = "${ordersContent}\n$npsLine"
-         file.writeText(fileText)
+        val npsLine = "NPS ${nps.formatToNDecimalPlaces(2)}"
+        val fileText = "${ordersContent}\n$npsLine"
+        file.writeText(fileText)
     }
 
     private val outputFilepath: String
-        get() = "$OUTPUT_DIR/output-${formattedTimestamp}"
+        get() = "$OUTPUT_DIR/output-$formattedTimestamp"
 
     private val formattedTimestamp: String
         get() = LocalDateTime.now().formattedTime

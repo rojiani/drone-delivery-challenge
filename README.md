@@ -91,7 +91,7 @@ Following from _Assumption 1_, I'm assuming that the likelihood of recommending 
 * For orders placed outside of drone operation hours, the delivery time is calculated by starting not at the time the order was placed, but rather the start time is at the start of the drone's operational hours.
     * Example: If an Order is placed at 22:05:00 and delivered the following day at 07:00:00, the delivery time is 1 hour (6 am - 7 am).
     * *Rationale*: If the delivery time is calculated as `deliveryTime - timeOrderPlaced`, then all orders placed between 22:00 and 02:15 would automatically lead to Detractor status even if delivery was instantaneous after drone operating hours recommenced.
-    * *Note*: The solution is designed in such a way that it is flexible. The dependency inversion principle is utilized so that the current implementation of the `DeliveryTimeCalculator` interface could easily be swapped out for a new implementation that uses a different method to calculate delivery time.
+    * *Note*: The solution is designed in such a way that it is flexible. The dependency inversion principle is utilized so that the current implementation of the `DeliveryTimeCalculator` interface, `OperatingHoursDeliveryTimeCalculator`, could easily be swapped out for a new implementation that uses a different method to calculate delivery time.
 * See also **Assumption 5**
 
 **Assumption 5 - Next-day Rollover.** 
