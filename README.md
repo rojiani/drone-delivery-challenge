@@ -25,7 +25,6 @@ Navigate to project directory.
 
 A Gradle Wrapper is provided, so that when a task is run with `gradlew`, a version of Gradle (5.4) will be downloaded for you.
 
-TODO:
 `$ ./gradlew run --args="input=<INPUT_FILE_PATH>"`
 
 **NOTE**: For Windows users, use `gradlew.bat` instead of `gradlew`.
@@ -34,8 +33,6 @@ Running unit tests:
 `$ ./gradlew test`
 
 
-TODO instructions CLI
-
 [Using Gradle Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html#sec:using_wrapper)
 
 See [Detailed Guide to Using an Existing Gradle Build](https://guides.gradle.org/using-an-existing-gradle-build/)
@@ -43,16 +40,6 @@ See [Detailed Guide to Using an Existing Gradle Build](https://guides.gradle.org
 * For Step 4, "Identifying the type of project", the type is a JVM project.
 
 ### Assumptions Made ###
-Can move diagonally
-
-Houses laid out at integer coordinates? Prob. best to assume no.
-
-Algorithm will always schedule to maximize NPS (not some other metric)
-
-TODO not delaying deliveries already exceeding max. delivery time
-
-TODO drone can only carry 1 package, & any single order can be fit completely in package.
-* Note that this isn't realistic. However, perhaps the input (the orders) are not all orders placed, but the subset of orders whose delivery can be fulfilled by drone - i.e., a separate service is used to produce this list of orders. 
 
 **Assumption 1 - Diagram Interpretation.**
 Scaling not as clear & unambiguous as it could be. I'm assuming that in the
@@ -106,23 +93,24 @@ Following from _Assumption 1_, I'm assuming that the likelihood of recommending 
         * If order is placed at 21:00 on 1/1, and is scheduled to be delivered at 09:00 on 1/2, the total delivery time (in hours) is 4: 
             * 1 hour on 1/1 (21:00-22:00), and 3 hours on 1/2 (06:00-09:00)
 
-
-
 **Assumption 6 - Input File.**  
-5A. TODO Doesn't exceed 2GB (`readLines`). TODO consider `useLines`
-5B. UTF-8
+5A. Doesn't exceed 2GB
+5B. Is UTF-8 format
 
 
-TODO - Assume that drone can move in any direction at same rate of 1 block / min
-* Prompt only gives speed for horizontal & vertical, but no reason to think that the drone's movement is restricted.
-* 1 block = 1 grid unit
-
-TODO - Assume that drone is constantly in motion at same speed.
-* For simplicity, ignore the following:
-    * acceleration from static to max velocity.
-    * time to ascend/descend in altitude to make delivery
-    * time to pick up next package
-* These are not necessarily negligible for a realistic model.
+TODO: Other Assumptions:
+* Algorithm will always schedule to maximize NPS (not some other metric)
+* Drone can only carry 1 package, & any single order can be fit completely in package.
+    * Note that this isn't realistic. However, perhaps the input (the orders) are not all orders placed, but the subset of orders whose delivery can be fulfilled by drone - i.e., a separate service is used to produce this list of orders. 
+* Assume that drone can move in any direction at same rate of 1 block / min
+    * Prompt only gives speed for horizontal & vertical, but no reason to think that the drone's movement is restricted.
+    * 1 block = 1 grid unit
+* Assume that drone is constantly in motion at same speed.
+    * For simplicity, ignore the following:
+        * acceleration from static to max velocity.
+        * time to ascend/descend in altitude to make delivery
+        * time to pick up next package
+    * These are not necessarily negligible for a realistic model.
 
 ### Design Decisions/Notes ###
 
@@ -132,18 +120,13 @@ to rely on that.
 * Drone speed is 1 vertical or horizontal grid block per minute.
     * diagonal
 
-TODO In problem, town owns 1 drone. This would likely increase.
+TODO In problem, town owns 1 drone. 
+* This would likely increase.
 * Operating hours could also change
 
 #### TODO ####
 
 TODO - scheduling algorithm choice
-* Considered:
-    * Greedy?
-    * Dynamic Prog.?
-    * which scheduling algorithms
-
-TODO - remove this section 
 
 TODO - Poll service
 * IRL, scheduler needs to poll some service to get newly placed orders with some frequency.
