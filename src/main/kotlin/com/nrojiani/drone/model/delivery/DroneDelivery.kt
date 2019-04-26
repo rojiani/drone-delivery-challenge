@@ -10,16 +10,15 @@ data class DroneDelivery(
     val order: Order,
     val timeOrderDelivered: LocalDateTime
 ) {
+    // Guaranteed non-null (init block validation)
+    private val oneWayTransitTime: Long = order.transitTime!!.sourceToDestinationTime
+
     val timeOrderPlaced: LocalDateTime = order.orderPlacedDateTime
-    val timeDroneReturned: LocalDateTime
-        get() {
-            // non-null validated in initializer block
-            val oneWayTime = order.transitTime!!.sourceToDestinationTime
-            return timeOrderDelivered.plusSeconds(oneWayTime)
-        }
+    val timeDroneDeparted: LocalDateTime = timeOrderDelivered.minusSeconds(oneWayTransitTime)
+    val timeDroneReturned: LocalDateTime = timeOrderDelivered.plusSeconds(oneWayTransitTime)
 
     init {
-        require(order.transitTime != null) {
+        requireNotNull(order.transitTime) {
             "order has no transitTime"
         }
     }

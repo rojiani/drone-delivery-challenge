@@ -50,4 +50,4 @@ val ORDER_4 = Order(
 )
 
 @JvmField
-val TODAY = LocalDate.now()
+val TODAY: LocalDate = LocalDate.now()

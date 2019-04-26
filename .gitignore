@@ -312,3 +312,4 @@ gradle-app.setting
 **/build/
 
 # End of https://www.gitignore.io/api/vim,java,linux,macos,gradle,kotlin,intellij,intellij+all,jetbrains+all
+src/main/resources/output

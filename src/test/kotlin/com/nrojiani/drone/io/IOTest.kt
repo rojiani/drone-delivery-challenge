@@ -8,8 +8,6 @@ import kotlin.test.assertFailsWith
 class IOTest {
 
     companion object {
-        private const val PROJECT_DIR = "/Users/nrojiani/IdeaProjects/drone-delivery-challenge"
-        private const val TEST_INPUT_DIR = "$PROJECT_DIR/src/main/resources/input"
         const val TEST_INPUT_1_PATH = "$TEST_INPUT_DIR/test-input-1"
         const val TEST_INPUT_DOES_NOT_EXIST = "$TEST_INPUT_DIR/test-input-non-existent"
     }

@@ -3,9 +3,8 @@ package com.nrojiani.drone.model
 import com.nrojiani.drone.model.delivery.DroneDelivery
 import com.nrojiani.drone.testutils.ORDER_1
 import com.nrojiani.drone.testutils.TODAY
-import org.junit.Test
-
 import org.junit.Assert.assertEquals
+import org.junit.Test
 import java.time.LocalDateTime
 import java.time.LocalTime
 
@@ -17,12 +16,20 @@ class DroneDeliveryTest {
     )
 
     @Test
-    fun getTimeOrderPlaced() {
+    fun timeOrderPlaced() {
         assertEquals(LocalDateTime.of(TODAY, LocalTime.of(5, 11, 50)), droneDelivery.timeOrderPlaced)
     }
 
     @Test
-    fun getTimeDroneReturned() {
+    fun timeDroneDeparted() {
+        assertEquals(
+            LocalDateTime.of(TODAY, LocalTime.parse("06:07:13")),
+            droneDelivery.timeDroneDeparted
+        )
+    }
+
+    @Test
+    fun timeDroneReturned() {
         assertEquals(
             LocalDateTime.of(TODAY, LocalTime.parse("06:31:21")),
             droneDelivery.timeDroneReturned

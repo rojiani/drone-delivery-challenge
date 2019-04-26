@@ -14,11 +14,10 @@ class MinTransitTimeDeliveryScheduler : DeliveryScheduler {
         val sortedByTransitTime = ordersSortedByTransitTime(orders)
 
         val date = orders.first().orderPlacedDateTime.toLocalDate()
-        val scheduledDeliveries = schedule(sortedByTransitTime,
-            LocalDateTime.of(date, DRONE_DELIVERY_OPERATING_HOURS.start)
-        )
 
-        return scheduledDeliveries
+        return schedule(
+            sortedByTransitTime, LocalDateTime.of(date, DRONE_DELIVERY_OPERATING_HOURS.start)
+        )
     }
 
     /**
@@ -39,7 +38,8 @@ class MinTransitTimeDeliveryScheduler : DeliveryScheduler {
         return sortedOrders.fold(arrayListOf()) { acc, order ->
             requireNotNull(order.transitTime == null)
 
-            val delivery = DroneDelivery(order, timeOrderDelivered = time.plusSeconds(order.transitTime!!.sourceToDestinationTime))
+            val delivery =
+                DroneDelivery(order, timeOrderDelivered = time.plusSeconds(order.transitTime!!.sourceToDestinationTime))
             time = delivery.timeDroneReturned
 
             acc.apply { acc.add(delivery) }

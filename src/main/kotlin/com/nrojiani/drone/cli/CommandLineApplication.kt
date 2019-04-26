@@ -1,12 +1,13 @@
 package com.nrojiani.drone.cli
 
+import com.nrojiani.drone.io.output.OutputWriter
+import com.nrojiani.drone.io.parser.parseOrders
 import com.nrojiani.drone.io.readFileLines
 import com.nrojiani.drone.model.DRONE_LAUNCH_FACILITY_LOCATION
 import com.nrojiani.drone.model.DRONE_SPEED_BLOCKS_PER_SECOND
 import com.nrojiani.drone.model.Order
 import com.nrojiani.drone.model.delivery.TransitTime
 import com.nrojiani.drone.model.delivery.TransitTimeCalculator
-import com.nrojiani.drone.parser.parseOrders
 import com.nrojiani.drone.scheduler.DeliveryScheduler
 import com.nrojiani.drone.scheduler.MinTransitTimeDeliveryScheduler
 import com.xenomachina.argparser.ArgParser
@@ -62,9 +63,14 @@ class CommandLineApplication(private val args: Array<String>) : KodeinAware {
 
             val deliveries = scheduler.scheduleDeliveries(orders)
 
-        }
+            deliveries.forEach { println(it.timeOrderDelivered.toLocalTime()) }
 
-        // TODO: print output file path
+            // TODO - Calculate NPS
+            val nps = Double.POSITIVE_INFINITY
+
+            // Write output file
+            OutputWriter(deliveries, nps).writeOutputFile()
+        }
     }
 
     // Set each order's TransitTime
@@ -72,10 +78,5 @@ class CommandLineApplication(private val args: Array<String>) : KodeinAware {
         order.transitTime = transitTimeCalculator.calculateSourceToDestinationTime(
             order.destination.distanceTo(DRONE_LAUNCH_FACILITY_LOCATION)
         ).run(::TransitTime)
-
-        println("(${order.orderId}): " +
-                "orderPlacedAt: ${order.orderPlacedDateTime.toLocalTime()} " +
-                "${order.destination.distanceFromOrigin} blocks => " +
-                "${order.transitTime!!.sourceToDestinationTime} s")
     }
 }

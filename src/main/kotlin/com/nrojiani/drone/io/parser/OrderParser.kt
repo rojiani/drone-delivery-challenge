@@ -1,6 +1,6 @@
 @file:JvmName("OrderParser")
 
-package com.nrojiani.drone.parser
+package com.nrojiani.drone.io.parser
 
 import com.nrojiani.drone.model.Coordinate
 import com.nrojiani.drone.model.Order
