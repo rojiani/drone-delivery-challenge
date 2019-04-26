@@ -10,6 +10,7 @@ Gradle is used as the build system. See Instructions below for how to run the ap
 
 Libraries used:
 
+[Kodein](https://kodein.org/di/) - a Dependency Injection framework for Kotlin
 [Kotlin ArgParser](https://github.com/xenomachina/kotlin-argparser) - a simple CLI argument parsing library for Kotlin.
 
 ## Instructions ##
