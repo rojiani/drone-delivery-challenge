@@ -1,59 +1,51 @@
 package com.nrojiani.drone.model.deliverytime
 
 import com.nrojiani.drone.model.Coordinate
-import com.nrojiani.drone.model.DRONE_SPEED_BLOCKS_PER_MIN
-import com.nrojiani.drone.testutils.EPSILON
-import org.junit.Test
-
+import com.nrojiani.drone.model.DRONE_SPEED_BLOCKS_PER_SECOND
+import com.nrojiani.drone.testutils.ORIGIN
 import org.junit.Assert.assertEquals
+import org.junit.Test
+import kotlin.math.round
 import kotlin.math.sqrt
 
 class TransitTimeCalculatorTest {
 
-    private val droneTimeCalc = TransitTimeCalculator(DRONE_SPEED_BLOCKS_PER_MIN)
-    private val carTimeCalc = TransitTimeCalculator(4.0 * DRONE_SPEED_BLOCKS_PER_MIN)
+    private val droneTimeCalc = TransitTimeCalculator(DRONE_SPEED_BLOCKS_PER_SECOND)
+    private val carTimeCalc = TransitTimeCalculator(4.0 * DRONE_SPEED_BLOCKS_PER_SECOND)
 
     @Test
     fun calculateSourceToDestinationTime() {
-        assertEquals(2.0, droneTimeCalc.calculateSourceToDestinationTime(2.0), EPSILON)
-        assertEquals(0.5, carTimeCalc.calculateSourceToDestinationTime(2.0), EPSILON)
+        assertEquals(120L, droneTimeCalc.calculateSourceToDestinationTime(2.0))
+        assertEquals(30L, carTimeCalc.calculateSourceToDestinationTime(2.0))
     }
 
     @Test
     fun calculateRoundTripTime() {
-        assertEquals(4.0, droneTimeCalc.calculateRoundTripTime(2.0), EPSILON)
-        assertEquals(1.0, carTimeCalc.calculateRoundTripTime(2.0), EPSILON)
+        assertEquals(240L, droneTimeCalc.calculateRoundTripTime(2.0))
+        assertEquals(60L, carTimeCalc.calculateRoundTripTime(2.0))
     }
 
     @Test
-    fun calculateSourceToDestinationTime_fromCoordinates() {
+    fun `calculateSourceToDestinationTime - from Coordinates`() {
         assertEquals(
-            sqrt(8.0), droneTimeCalc.calculateSourceToDestinationTime(
+            round(sqrt(8.0) * SECONDS_PER_MINUTE).toLong(),
+            droneTimeCalc.calculateSourceToDestinationTime(
                 source = Coordinate(1.0, 2.0),
                 dest = Coordinate(3.0, 4.0)
-            ), EPSILON
+            )
         )
         assertEquals(
-            sqrt(0.5), carTimeCalc.calculateSourceToDestinationTime(
+            round(sqrt(0.5) * SECONDS_PER_MINUTE).toLong(),
+            carTimeCalc.calculateSourceToDestinationTime(
                 source = Coordinate(1.0, 2.0),
                 dest = Coordinate(3.0, 4.0)
-            ), EPSILON
+            )
         )
     }
 
     @Test
-    fun calculateRoundTripTime_fromCoordinates() {
-        assertEquals(
-            sqrt(32.0), droneTimeCalc.calculateRoundTripTime(
-                source = Coordinate(1.0, 2.0),
-                dest = Coordinate(3.0, 4.0)
-            ), EPSILON
-        )
-        assertEquals(
-            sqrt(2.0), carTimeCalc.calculateRoundTripTime(
-                source = Coordinate(1.0, 2.0),
-                dest = Coordinate(3.0, 4.0)
-            ), EPSILON
-        )
+    fun `calculateRoundTripTime - from Coordinates`() {
+        assertEquals(240L, droneTimeCalc.calculateRoundTripTime(ORIGIN, Coordinate(0.0, 2.0)))
+        assertEquals(60L, carTimeCalc.calculateRoundTripTime(ORIGIN, Coordinate(0.0, 2.0)))
     }
 }

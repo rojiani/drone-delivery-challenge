@@ -19,12 +19,12 @@ class OrderParserTest {
                 Order(
                     orderId = "WM001",
                     destination = Coordinate(-5, 11),
-                    dateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 11, 50))
+                    orderPlacedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 11, 50))
                 ),
                 Order(
                     orderId = "WM002",
                     destination = Coordinate(2, -3),
-                    dateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 11, 55))
+                    orderPlacedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 11, 55))
                 )
             ), parseOrders(listOf("WM001 N11W5 05:11:50", "WM002 S3E2 05:11:55"))
         )
@@ -36,7 +36,7 @@ class OrderParserTest {
             Order(
                 orderId = "WM001",
                 destination = Coordinate(-5, 11),
-                dateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 11, 50))
+                orderPlacedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 11, 50))
             ), parseOrder("WM001 N11W5 05:11:50")
         )
     }

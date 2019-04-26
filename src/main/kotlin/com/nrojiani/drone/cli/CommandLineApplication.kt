@@ -2,7 +2,7 @@ package com.nrojiani.drone.cli
 
 import com.nrojiani.drone.io.readFileLines
 import com.nrojiani.drone.model.DRONE_LAUNCH_FACILITY_LOCATION
-import com.nrojiani.drone.model.DRONE_SPEED_BLOCKS_PER_MIN
+import com.nrojiani.drone.model.DRONE_SPEED_BLOCKS_PER_SECOND
 import com.nrojiani.drone.model.Order
 import com.nrojiani.drone.model.deliverytime.TransitTime
 import com.nrojiani.drone.model.deliverytime.TransitTimeCalculator
@@ -19,7 +19,6 @@ import org.kodein.di.generic.singleton
  * Entry point for application.
  */
 fun main(args: Array<String>) {
-    println("Main: main(args=${args.toList()})")
     val app = CommandLineApplication(args)
     app.run()
 }
@@ -35,7 +34,7 @@ class CommandLineApplication(private val args: Array<String>) : KodeinAware {
     // Dependency Injection
     override val kodein = Kodein {
         bind<TransitTimeCalculator>() with provider {
-            TransitTimeCalculator(DRONE_SPEED_BLOCKS_PER_MIN)
+            TransitTimeCalculator(DRONE_SPEED_BLOCKS_PER_SECOND)
         }
 
         bind<CommandLineArguments>() with singleton {
@@ -51,15 +50,23 @@ class CommandLineApplication(private val args: Array<String>) : KodeinAware {
             val orderInputLines = readFileLines(inputFilepath)
             val orders: List<Order> = parseOrders(orderInputLines)
 
-            // Set each order's TransitTime
-            orders.forEach { order ->
-                order.transitTime = transitTimeCalculator.calculateSourceToDestinationTime(
-                    order.destination.distanceTo(DRONE_LAUNCH_FACILITY_LOCATION)
-                ).run(::TransitTime)
-            }
+            addTransitTimes(orders)
 
+            println(orders)
         }
 
         // TODO: print output file path
+    }
+
+    // Set each order's TransitTime
+    private fun addTransitTimes(orders: List<Order>) = orders.forEach { order ->
+        order.transitTime = transitTimeCalculator.calculateSourceToDestinationTime(
+            order.destination.distanceTo(DRONE_LAUNCH_FACILITY_LOCATION)
+        ).run(::TransitTime)
+
+        println("(${order.orderId}): " +
+                "orderPlacedAt: ${order.orderPlacedDateTime.toLocalTime()} " +
+                "${order.destination.distanceFromOrigin} blocks => " +
+                "${order.transitTime!!.sourceToDestinationTime} s")
     }
 }

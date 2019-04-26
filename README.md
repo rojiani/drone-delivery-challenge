@@ -80,25 +80,49 @@ Following from _Assumption 1_, I'm assuming that the likelihood of recommending 
     * assume cutoff between Promoter & Neutral is 1.5 hours, & the cutoff between
     Neutral & Detractor is 3.75 hours.
 
-| Category  |  Time (Hours) | Time (Minutes) | 
-|:--------- | -------------:| --------------:|
-| Promoter  |    `[0, 1.5)` |      `[0, 90)` |
-| Neutral   | `[1.5, 3.75)` |    `[90, 225)` |
-| Detractor |   `[3.75, ∞)` |     `[225, ∞)` |
+| Category  |    Time (hrs) |  Time (min) |        Time (s) |
+|:--------- | -------------:| -----------:| ---------------:|
+| Promoter  |    `[0, 1.5)` |   `[0, 90)` |     `[0, 5400)` |
+| Neutral   | `[1.5, 3.75)` | `[90, 225)` | `[5400, 13500)` |
+| Detractor |   `[3.75, ∞)` |  `[225, ∞)` |    `[13500, ∞)` | 
 
 
-**Assumption 4 - Next-day Rollover.** 
-* order placed at 9 pm, and will take 2 hours to deliver
-    * drone delivery occurs only between 6 am - 10 pm.
-    * it's conceivable that a drone could start the delivery at 9 pm and travel until 10 pm, and then the following morning travel the remainder from 6-7 am. But that would mean that the drone must land at 10 pm and remain somewhere until the drone delivery window reopens the next day. I would assume people wouldn't be too happy about a drone parking in their front yard overnight, so this strategy would only work if the drone delivery company also had several drone-parking stations. This would significantly complicate the problem, since the scheduler would need to consider paths other than the most direct one to customer, ensure that drone can reach the drone-parking station by cutoff, etc.
-        * This strategy is also likely unrealistic - establishing numerous drone-parking stations would probably face resistance from the town (unless this takes place in the future, & drone stations are a common occurrence that people are used to)
-    * Therefore, if the _full_ trip (from launch facility to customer _and back_) by 10pm, then the delivery will begin the following morning.
-    * This also applies to orders placed after 10pm & before 6am.
+**Assumption 4 - Delivery Time ignores non-operational hours**
+* For orders placed outside of drone operation hours, the delivery time is calculated by starting not at the time the order was placed, but rather the start time is at the start of the drone's operational hours.
+    * Example: If an Order is placed at 22:05:00 and delivered the following day at 07:00:00, the delivery time is 1 hour (6 am - 7 am).
+    * *Rationale*: If the delivery time is calculated as `deliveryTime - timeOrderPlaced`, then all orders placed between 22:00 and 02:15 would automatically lead to Detractor status even if delivery was instantaneous after drone operating hours recommenced.
+    * *Note*: The solution is designed in such a way that it is flexible. The dependency inversion principle is utilized so that the current implementation of the `DeliveryTimeCalculator` interface could easily be swapped out for a new implementation that uses a different method to calculate delivery time.
+* See also **Assumption 5**
 
-**Assumption 5 - Input File.**  
+**Assumption 5 - Next-day Rollover.** 
+* If there is insufficient time remaining in the current operational hours for a package to be delivered to the customer *and* for the drone to return to the facility, the package will be rescheduled to be delivered the next day.
+    * Example: order placed at 9 pm, and will take 2 hours to deliver
+        * drone delivery occurs only between 6 am - 10 pm.
+        * it's conceivable that a drone could start the delivery at 9 pm and travel until 10 pm, and then the following morning travel the remainder from 6-7 am. But that would mean that the drone must land somewhere at 10 pm and remain there until the drone delivery window reopens the next day. I would assume people wouldn't be too happy about a drone parking in their front yard overnight, so this strategy would only work if the drone delivery company also had several drone-parking stations. This would significantly complicate the problem, since the scheduler would need to consider paths other than the most direct one to customer, ensure that drone can reach the drone-parking station by cutoff, etc.
+        * This strategy is also likely unrealistic - establishing numerous drone-parking stations would probably face resistance from the town.
+    * Therefore, if the _full_ trip (from launch facility to customer _and back_) by 10pm, then the delivery will be rescheduled for the following day.
+* As in the case of orders placed during off-hours (_Assumption 4_), delivery time for these packages does not include the time between 10pm-6am when drones are non-operational.
+    * It does include all operational hours on both days:
+        * If order is placed at 21:00 on 1/1, and is scheduled to be delivered at 09:00 on 1/2, the total delivery time (in hours) is 4: 
+            * 1 hour on 1/1 (21:00-22:00), and 3 hours on 1/2 (06:00-09:00)
+
+
+
+**Assumption 6 - Input File.**  
 5A. TODO Doesn't exceed 2GB (`readLines`). TODO consider `useLines`
 5B. UTF-8
 
+
+TODO - Assume that drone can move in any direction at same rate of 1 block / min
+* Prompt only gives speed for horizontal & vertical, but no reason to think that the drone's movement is restricted.
+* 1 block = 1 grid unit
+
+TODO - Assume that drone is constantly in motion at same speed.
+* For simplicity, ignore the following:
+    * acceleration from static to max velocity.
+    * time to ascend/descend in altitude to make delivery
+    * time to pick up next package
+* These are not necessarily negligible for a realistic model.
 
 ### Design Decisions/Notes ###
 
@@ -112,6 +136,13 @@ TODO In problem, town owns 1 drone. This would likely increase.
 * Operating hours could also change
 
 #### TODO ####
+
+TODO - scheduling algorithm choice
+* Considered:
+    * Greedy?
+    * Dynamic Prog.?
+    * which scheduling algorithms
+
 TODO - remove this section 
 
 TODO - Poll service

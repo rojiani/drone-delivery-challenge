@@ -1,39 +1,41 @@
 package com.nrojiani.drone.model.deliverytime
 
 import com.nrojiani.drone.model.Coordinate
+import kotlin.math.round
 
 /**
  * Calculates travel time based solely on distance.
- * @param speed travel speed (in minutes)
+ * @param speed travel speed (in seconds)
  */
 data class TransitTimeCalculator(private val speed: Double) {
 
     /**
-     * Calculate the time (in minutes) to travel the specified [distance] (one-way) at a constant [speed].
+     * Calculate the time (in seconds) to travel the specified [distance] (one-way) at a constant [speed].
+     * Rounded to nearest second.
      */
-    fun calculateSourceToDestinationTime(distance: Double): Double {
+    fun calculateSourceToDestinationTime(distance: Double): Long {
         require(distance >= 0.0 && distance.isFinite()) { "Invalid distance: $distance" }
-        return distance / speed
+        return round(distance / speed).toLong()
     }
 
     /**
-     * Calculate the time (in minutes) to travel the distance (one-way) between the 2 specified points
+     * Calculate the time (in seconds) to travel the distance (one-way) between the 2 specified points
      * at a constant [speed].
      */
-    fun calculateSourceToDestinationTime(source: Coordinate, dest: Coordinate): Double =
+    fun calculateSourceToDestinationTime(source: Coordinate, dest: Coordinate): Long =
         calculateSourceToDestinationTime(source.distanceTo(dest))
 
     /**
-     * Calculate the time (in minutes) to travel the specified [distanceFromSourceToDest] and back at a constant
+     * Calculate the time (in seconds) to travel the specified [distanceFromSourceToDest] and back at a constant
      * [speed].
      */
-    fun calculateRoundTripTime(distanceFromSourceToDest: Double): Double =
-            calculateSourceToDestinationTime(distanceFromSourceToDest) * 2.0
+    fun calculateRoundTripTime(distanceFromSourceToDest: Double): Long =
+            calculateSourceToDestinationTime(distanceFromSourceToDest) * 2
 
     /**
-     * Calculate the time (in minutes) to travel from [source] to [dest] and then from [dest] to [source]
+     * Calculate the time (in seconds) to travel from [source] to [dest] and then from [dest] to [source]
      * at a constant [speed].
      */
-    fun calculateRoundTripTime(source: Coordinate, dest: Coordinate): Double =
+    fun calculateRoundTripTime(source: Coordinate, dest: Coordinate): Long =
         calculateRoundTripTime(source.distanceTo(dest))
 }
