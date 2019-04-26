@@ -7,7 +7,7 @@ class Order(
     val orderId: String,
     val destination: Coordinate,
     val dateTime: LocalDateTime,
-    val transitTime: TransitTime? = null
+    var transitTime: TransitTime? = null
 ) {
     override fun toString(): String {
         return "Order(orderId='$orderId', destination=$destination, dateTime=$dateTime, transitTime=$transitTime)"

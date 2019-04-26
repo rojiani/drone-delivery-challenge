@@ -1,8 +1,10 @@
 package com.nrojiani.drone.cli
 
 import com.nrojiani.drone.io.readFileLines
+import com.nrojiani.drone.model.DRONE_LAUNCH_FACILITY_LOCATION
 import com.nrojiani.drone.model.DRONE_SPEED_BLOCKS_PER_MIN
 import com.nrojiani.drone.model.Order
+import com.nrojiani.drone.model.deliverytime.TransitTime
 import com.nrojiani.drone.model.deliverytime.TransitTimeCalculator
 import com.nrojiani.drone.parser.parseOrders
 import com.xenomachina.argparser.ArgParser
@@ -46,19 +48,16 @@ class CommandLineApplication(private val args: Array<String>) : KodeinAware {
      */
     fun run() {
         parsedArgs.run {
-            println("inputFilepath = $inputFilepath")
-            val inputLines = readFileLines(inputFilepath)
-            println("inputLines = $inputLines")
+            val orderInputLines = readFileLines(inputFilepath)
+            val orders: List<Order> = parseOrders(orderInputLines)
 
-            val orders: List<Order> = parseOrders(inputLines)
-
+            // Set each order's TransitTime
             orders.forEach { order ->
-                val distance = order.destination.distanceFromOrigin
-                val transitTime = transitTimeCalculator.calculateSourceToDestinationTime(distance)
-                println("order = $order")
-                println("distance = $distance")
-                println("transitTime = $transitTime")
+                order.transitTime = transitTimeCalculator.calculateSourceToDestinationTime(
+                    order.destination.distanceTo(DRONE_LAUNCH_FACILITY_LOCATION)
+                ).run(::TransitTime)
             }
+
         }
 
         // TODO: print output file path
