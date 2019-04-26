@@ -26,18 +26,13 @@ Navigate to project directory.
 A Gradle Wrapper is provided, so that when a task is run with `gradlew`, a version of Gradle (5.4) will be downloaded for you.
 
 `$ ./gradlew run --args="input=<INPUT_FILE_PATH>"`
-
 **NOTE**: For Windows users, use `gradlew.bat` instead of `gradlew`.
+
+to run the sample input file:
+`$ ./gradlew run --args="--input=<PROJECT_ROOT>/src/main/resources/input/test-input-1"`
 
 Running unit tests:
 `$ ./gradlew test`
-
-
-[Using Gradle Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html#sec:using_wrapper)
-
-See [Detailed Guide to Using an Existing Gradle Build](https://guides.gradle.org/using-an-existing-gradle-build/)
-
-* For Step 4, "Identifying the type of project", the type is a JVM project.
 
 ### Assumptions Made ###
 
