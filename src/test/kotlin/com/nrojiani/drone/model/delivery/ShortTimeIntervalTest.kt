@@ -2,6 +2,8 @@ package com.nrojiani.drone.model.delivery
 
 import com.nrojiani.drone.model.DRONE_DELIVERY_OFF_HOURS
 import com.nrojiani.drone.model.DRONE_DELIVERY_OPERATING_HOURS
+import com.nrojiani.drone.utils.daysToSeconds
+import com.nrojiani.drone.utils.hoursToSeconds
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.LocalTime

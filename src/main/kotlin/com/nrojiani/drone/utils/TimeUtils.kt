@@ -1,6 +1,6 @@
 @file:JvmName("TimeUtils")
 
-package com.nrojiani.drone.model.delivery
+package com.nrojiani.drone.utils
 
 import java.math.BigInteger
 

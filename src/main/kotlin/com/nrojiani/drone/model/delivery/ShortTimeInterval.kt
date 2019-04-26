@@ -1,8 +1,6 @@
 package com.nrojiani.drone.model.delivery
 
-import java.time.Duration
-import java.time.LocalDate
-import java.time.LocalDateTime
+import com.nrojiani.drone.utils.daysToSeconds
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
@@ -24,6 +22,6 @@ data class ShortTimeInterval(val start: LocalTime, val end: LocalTime) {
 
     init {
         // if start == end, then it could represent either an empty interval or a 24-hour interval.
-        require(!start.equals(end)) { "start cannot be equal to end" }
+        require(start != end) { "start cannot be equal to end" }
     }
 }

@@ -1,23 +1,19 @@
 package com.nrojiani.drone.scheduler
 
-import com.nrojiani.drone.model.Coordinate
-import com.nrojiani.drone.model.Order
-import com.nrojiani.drone.testutils.ORDER_1
-import com.nrojiani.drone.testutils.ORDER_2
-import com.nrojiani.drone.testutils.ORDER_3
-import com.nrojiani.drone.testutils.ORDER_4
-import com.nrojiani.drone.testutils.TODAY
+import com.nrojiani.drone.testutils.ORDERS_WITH_TRANSIT_TIMES
+import com.nrojiani.drone.testutils.PENDING_ORDER_1
+import com.nrojiani.drone.testutils.PENDING_ORDER_2
+import com.nrojiani.drone.testutils.PENDING_ORDER_3
+import com.nrojiani.drone.testutils.PENDING_ORDER_4
 import org.junit.Test
-import java.time.LocalDateTime
 import java.time.LocalTime
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 class MinTransitTimeDroneDeliverySchedulerTest {
 
     private val droneDeliveryScheduler = MinTransitTimeDeliveryScheduler()
-    private val orders = listOf(ORDER_1, ORDER_2, ORDER_3, ORDER_4)
 
+    // TODO investigate discrepancy b/t appDeliveryTimes & unitTestDeliveryTimes
     // When running app
     private val appDeliveryTimes = listOf(
         LocalTime.parse("06:03:36"),
@@ -36,10 +32,10 @@ class MinTransitTimeDroneDeliverySchedulerTest {
 
     @Test
     fun scheduleDeliveries() {
-        val scheduled = droneDeliveryScheduler.scheduleDeliveries(orders)
+        val scheduled = droneDeliveryScheduler.scheduleDeliveries(ORDERS_WITH_TRANSIT_TIMES)
 
         // Deliveries sorted by closest to furthest:
-        assertEquals(listOf("WM002", "WM001", "WM004", "WM003"), scheduled.map { it.order.orderId })
+        assertEquals(listOf("WM002", "WM001", "WM004", "WM003"), scheduled.map { it.orderWithTransitTime.orderId })
 
         // Expected delivery times
         assertEquals(
@@ -49,17 +45,8 @@ class MinTransitTimeDroneDeliverySchedulerTest {
     }
 
     @Test
-    fun `scheduleDeliveries - orders without transit time`() {
-        val input = orders + Order("WM005", Coordinate(1.0, 4.0), LocalDateTime.of(TODAY, LocalTime.of(7, 0, 45)))
-
-        assertFailsWith<IllegalArgumentException> {
-            droneDeliveryScheduler.scheduleDeliveries(input)
-        }
-    }
-
-    @Test
     fun ordersSortedByTransitTime() {
-        val expected = listOf(ORDER_2, ORDER_1, ORDER_4, ORDER_3)
-        assertEquals(expected, droneDeliveryScheduler.ordersSortedByTransitTime(orders))
+        val expected = listOf(PENDING_ORDER_2, PENDING_ORDER_1, PENDING_ORDER_4, PENDING_ORDER_3)
+        assertEquals(expected, droneDeliveryScheduler.ordersSortedByTransitTime(ORDERS_WITH_TRANSIT_TIMES))
     }
 }

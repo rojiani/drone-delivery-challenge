@@ -1,5 +1,8 @@
 package com.nrojiani.drone.model.delivery
 
+import com.nrojiani.drone.utils.daysToSeconds
+import com.nrojiani.drone.utils.hoursToSeconds
+import com.nrojiani.drone.utils.minsToSeconds
 import org.junit.Test
 
 import org.junit.Assert.assertEquals
@@ -14,6 +17,8 @@ class TimeUtilsTest {
         assertEquals(0L, hoursToSeconds(0))
         assertEquals(3600L, hoursToSeconds(1))
         assertEquals(7200L, hoursToSeconds(2))
+        assertEquals(28800L, hoursToSeconds(8))
+        assertEquals(57600L, hoursToSeconds(16))
         assertEquals(8053200L, hoursToSeconds(2237))
 
         assertFailsWith<IllegalArgumentException> { hoursToSeconds(-1) }

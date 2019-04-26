@@ -1,4 +1,4 @@
-package com.nrojiani.drone.scheduler
+package com.nrojiani.drone.scheduler.calculator
 
 import com.nrojiani.drone.model.delivery.DroneDelivery
 

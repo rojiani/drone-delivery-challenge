@@ -31,7 +31,9 @@ A Gradle Wrapper is provided, so that when a task is run with `gradlew`, a versi
 to run the sample input file:
 `$ ./gradlew run --args="--input=<PROJECT_ROOT>/src/main/resources/input/test-input-1"`
 
-Running unit tests:
+After running the application, the output filepath will be printed to the console.
+
+To run the unit tests:
 `$ ./gradlew test`
 
 ### Assumptions Made ###
@@ -122,6 +124,7 @@ TODO In problem, town owns 1 drone.
 #### TODO ####
 
 TODO - scheduling algorithm choice
+* Multiple options
 
 TODO - Poll service
 * IRL, scheduler needs to poll some service to get newly placed orders with some frequency.

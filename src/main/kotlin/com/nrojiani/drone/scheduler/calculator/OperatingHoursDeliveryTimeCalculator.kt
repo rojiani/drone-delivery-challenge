@@ -1,7 +1,7 @@
-package com.nrojiani.drone.scheduler
+package com.nrojiani.drone.scheduler.calculator
 
-import com.nrojiani.drone.extensions.isInTimeInterval
-import com.nrojiani.drone.extensions.isSameDayAs
+import com.nrojiani.drone.utils.extensions.isInShortTimeInterval
+import com.nrojiani.drone.utils.extensions.isSameDayAs
 import com.nrojiani.drone.model.delivery.DroneDelivery
 import com.nrojiani.drone.model.delivery.ShortTimeInterval
 import java.time.Duration
@@ -12,8 +12,8 @@ import java.time.temporal.ChronoUnit
  * Calculates the delivery time, not counting hours outside of drone delivery.
  * See Assumptions 4 & 5 in README for details.
  */
-class OperatingHoursDeliveryTimeCalculator(private val operatingHours: ShortTimeInterval) :
-    DeliveryTimeCalculator {
+class OperatingHoursDeliveryTimeCalculator(private val operatingHours: ShortTimeInterval) : DeliveryTimeCalculator {
+
     override fun calculate(droneDelivery: DroneDelivery): Long {
         val dateTimeOrderPlaced: LocalDateTime = droneDelivery.timeOrderPlaced
         val dateTimeOrderDelivered: LocalDateTime = droneDelivery.timeOrderDelivered
@@ -24,20 +24,22 @@ class OperatingHoursDeliveryTimeCalculator(private val operatingHours: ShortTime
         val duration = Duration.between(timeOrderPlaced, timeOrderDelivered)
 
         val wasDeliveredSameDay = dateTimeOrderPlaced.isSameDayAs(dateTimeOrderDelivered)
-        val orderPlacedDuringOperatingHours = timeOrderPlaced.isInTimeInterval(operatingHours)
+
+        val orderPlacedDuringOperatingHours = timeOrderPlaced.isInShortTimeInterval(operatingHours)
 
         val totalSeconds = dateTimeOrderPlaced.until(dateTimeOrderDelivered, ChronoUnit.SECONDS)
+
         val offHours = ShortTimeInterval(operatingHours.end, operatingHours.start)
 
         return when {
             orderPlacedDuringOperatingHours && wasDeliveredSameDay -> duration.seconds
             orderPlacedDuringOperatingHours && !wasDeliveredSameDay -> {
                 val days = dateOrderPlaced.until(dateOrderDelivered, ChronoUnit.DAYS)
-                // for each day, ignore operatingHours
                 totalSeconds - (days * offHours.seconds)
             }
             !orderPlacedDuringOperatingHours && wasDeliveredSameDay -> {
                 val secondsInoperable = ShortTimeInterval(timeOrderPlaced, operatingHours.start).seconds
+                // println("secondsInoperable = $secondsInoperable")
                 totalSeconds - secondsInoperable
             }
             else -> {

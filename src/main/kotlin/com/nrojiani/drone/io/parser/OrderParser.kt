@@ -2,17 +2,23 @@
 
 package com.nrojiani.drone.io.parser
 
+import com.nrojiani.drone.io.readFileLines
 import com.nrojiani.drone.model.Coordinate
-import com.nrojiani.drone.model.Order
+import com.nrojiani.drone.model.order.Order
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeParseException
 
 /**
+ * Converts the input file at [filepath] to a list of [Order].
+ */
+internal fun parseOrdersFromFile(filepath: String): List<Order> = readFileLines(filepath).run(::parseOrders)
+
+/**
  * Map each order input line to an [Order] model object.
  */
-fun parseOrders(orderLines: List<String>): List<Order> = orderLines.map { parseOrder(it) }
+internal fun parseOrders(orderLines: List<String>): List<Order> = orderLines.map { parseOrder(it) }
 
 /**
  * Responsible for parsing a line of input and mapping the

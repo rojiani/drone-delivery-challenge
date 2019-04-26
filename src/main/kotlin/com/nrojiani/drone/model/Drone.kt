@@ -3,7 +3,7 @@
 package com.nrojiani.drone.model
 
 import com.nrojiani.drone.model.delivery.ShortTimeInterval
-import com.nrojiani.drone.model.delivery.SECONDS_PER_MINUTE
+import com.nrojiani.drone.utils.SECONDS_PER_MINUTE
 import java.time.LocalTime
 
 const val DRONE_SPEED_BLOCKS_PER_MIN = 1.0

@@ -1,7 +1,9 @@
 package com.nrojiani.drone.io.parser
 
 import com.nrojiani.drone.model.Coordinate
-import com.nrojiani.drone.model.Order
+import com.nrojiani.drone.model.order.Order
+import com.nrojiani.drone.testutils.ORDERS
+import com.nrojiani.drone.testutils.TEST_INPUT_FILEPATH
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.LocalDate
@@ -11,6 +13,11 @@ import java.time.format.DateTimeParseException
 import kotlin.test.assertFailsWith
 
 class OrderParserTest {
+
+    @Test
+    fun parseOrdersFromFile() {
+        assertEquals(ORDERS, parseOrdersFromFile(TEST_INPUT_FILEPATH))
+    }
 
     @Test
     fun parseOrders() {

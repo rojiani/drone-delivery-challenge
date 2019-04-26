@@ -1,7 +1,7 @@
 package com.nrojiani.drone.model
 
 import com.nrojiani.drone.model.delivery.DroneDelivery
-import com.nrojiani.drone.testutils.ORDER_1
+import com.nrojiani.drone.testutils.PENDING_ORDER_1
 import com.nrojiani.drone.testutils.TODAY
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -11,7 +11,7 @@ import java.time.LocalTime
 class DroneDeliveryTest {
 
     private val droneDelivery = DroneDelivery(
-        order = ORDER_1,
+        orderWithTransitTime = PENDING_ORDER_1,
         timeOrderDelivered = LocalDateTime.of(TODAY, LocalTime.parse("06:19:17"))
     )
 

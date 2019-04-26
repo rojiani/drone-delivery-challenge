@@ -13,15 +13,20 @@ class OutputWriter(
     fun writeOutputFile() {
         val file = File(outputFilepath)
 
-        println("output filepath: $outputFilepath")
+        println("Results written to output file at:\n$outputFilepath")
 
-        val ordersContent: String = scheduledDeliveries.map {
-            "${it.order.orderId} ${it.timeDroneDeparted.formattedTime}"
-        }.joinToString("\n")
+        val ordersContent: String = scheduledDeliveries.joinToString("\n") {
+            "${it.orderWithTransitTime.orderId} ${it.timeDroneDeparted.formattedTime}"
+        }
 
         val npsLine = "NPS ${nps.formatToNDecimalPlaces(2)}"
-        val fileText = "${ordersContent}\n$npsLine"
+        val fileText = "$ordersContent\n$npsLine"
         file.writeText(fileText)
+
+        println("Preview of Output File:\n----(begin)----")
+        val outputText = File(outputFilepath).readText()
+        println(outputText)
+        println("----(end)---\n")
     }
 
     private val outputFilepath: String
