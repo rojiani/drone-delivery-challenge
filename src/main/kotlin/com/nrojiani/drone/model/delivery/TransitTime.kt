@@ -1,4 +1,4 @@
-package com.nrojiani.drone.model.deliverytime
+package com.nrojiani.drone.model.delivery
 
 /**
  * The delivery time based solely on distance - does not represent actual delivery time, which can be influenced by

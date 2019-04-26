@@ -1,7 +1,7 @@
 package com.nrojiani.drone.model
 
-import com.nrojiani.drone.model.deliverytime.MINUTES_PER_HOUR
-import com.nrojiani.drone.model.deliverytime.SECONDS_PER_MINUTE
+import com.nrojiani.drone.model.delivery.MINUTES_PER_HOUR
+import com.nrojiani.drone.model.delivery.SECONDS_PER_MINUTE
 
 /**
  * Likelihood of recommending service.

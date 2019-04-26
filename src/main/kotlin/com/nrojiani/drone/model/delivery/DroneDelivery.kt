@@ -1,5 +1,6 @@
-package com.nrojiani.drone.model
+package com.nrojiani.drone.model.delivery
 
+import com.nrojiani.drone.model.Order
 import java.time.LocalDateTime
 
 /**

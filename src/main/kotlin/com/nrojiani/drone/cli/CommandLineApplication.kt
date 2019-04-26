@@ -4,9 +4,11 @@ import com.nrojiani.drone.io.readFileLines
 import com.nrojiani.drone.model.DRONE_LAUNCH_FACILITY_LOCATION
 import com.nrojiani.drone.model.DRONE_SPEED_BLOCKS_PER_SECOND
 import com.nrojiani.drone.model.Order
-import com.nrojiani.drone.model.deliverytime.TransitTime
-import com.nrojiani.drone.model.deliverytime.TransitTimeCalculator
+import com.nrojiani.drone.model.delivery.TransitTime
+import com.nrojiani.drone.model.delivery.TransitTimeCalculator
 import com.nrojiani.drone.parser.parseOrders
+import com.nrojiani.drone.scheduler.DeliveryScheduler
+import com.nrojiani.drone.scheduler.MinTransitTimeDeliveryScheduler
 import com.xenomachina.argparser.ArgParser
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -30,6 +32,7 @@ class CommandLineApplication(private val args: Array<String>) : KodeinAware {
 
     private val transitTimeCalculator: TransitTimeCalculator by instance()
     private val parsedArgs: CommandLineArguments by instance()
+    private val scheduler: DeliveryScheduler by instance()
 
     // Dependency Injection
     override val kodein = Kodein {
@@ -39,6 +42,10 @@ class CommandLineApplication(private val args: Array<String>) : KodeinAware {
 
         bind<CommandLineArguments>() with singleton {
             ArgParser(args).parseInto(::CommandLineArguments)
+        }
+
+        bind<DeliveryScheduler>() with singleton {
+            MinTransitTimeDeliveryScheduler()
         }
     }
 
@@ -51,8 +58,10 @@ class CommandLineApplication(private val args: Array<String>) : KodeinAware {
             val orders: List<Order> = parseOrders(orderInputLines)
 
             addTransitTimes(orders)
+            println("orders with transit times: $orders")
 
-            println(orders)
+            val deliveries = scheduler.scheduleDeliveries(orders)
+
         }
 
         // TODO: print output file path

@@ -3,7 +3,7 @@ package com.nrojiani.drone.model
 import com.nrojiani.drone.model.PredictedRecommendation.DETRACTOR
 import com.nrojiani.drone.model.PredictedRecommendation.NEUTRAL
 import com.nrojiani.drone.model.PredictedRecommendation.PROMOTER
-import com.nrojiani.drone.model.deliverytime.SECONDS_PER_MINUTE
+import com.nrojiani.drone.model.delivery.SECONDS_PER_MINUTE
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlin.test.assertFailsWith

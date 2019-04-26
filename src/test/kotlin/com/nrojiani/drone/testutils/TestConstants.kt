@@ -2,7 +2,7 @@ package com.nrojiani.drone.testutils
 
 import com.nrojiani.drone.model.Coordinate
 import com.nrojiani.drone.model.Order
-import com.nrojiani.drone.model.deliverytime.TransitTime
+import com.nrojiani.drone.model.delivery.TransitTime
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -48,3 +48,6 @@ val ORDER_4 = Order(
     orderPlacedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 31, 50)),
     transitTime = TransitTime(transitTimeToDestination = 724L)
 )
+
+@JvmField
+val TODAY = LocalDate.now()

@@ -1,4 +1,4 @@
-package com.nrojiani.drone.model.deliverytime
+package com.nrojiani.drone.model.delivery
 
 import com.nrojiani.drone.model.Coordinate
 import kotlin.math.round

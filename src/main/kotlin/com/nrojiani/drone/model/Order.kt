@@ -1,6 +1,6 @@
 package com.nrojiani.drone.model
 
-import com.nrojiani.drone.model.deliverytime.TransitTime
+import com.nrojiani.drone.model.delivery.TransitTime
 import java.time.LocalDateTime
 
 class Order(
