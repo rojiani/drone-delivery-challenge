@@ -17,7 +17,6 @@ import java.nio.file.Paths
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-
 class OutputWriterTest {
 
     private val scheduledDeliveries: List<DroneDelivery> = listOf(
@@ -41,7 +40,7 @@ class OutputWriterTest {
     fun tearDown() {
         // delete all files
         outputDir.list().forEach { fp ->
-            val filePath: Path = Paths.get("${outputDirPath}/$fp")
+            val filePath: Path = Paths.get("$outputDirPath/$fp")
             Files.delete(filePath)
         }
     }

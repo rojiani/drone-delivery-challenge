@@ -4,12 +4,9 @@ import com.nrojiani.drone.model.DRONE_LAUNCH_FACILITY_LOCATION
 import com.nrojiani.drone.model.DRONE_SPEED_BLOCKS_PER_SECOND
 import com.nrojiani.drone.scheduler.calculator.TransitTimeCalculator
 import com.nrojiani.drone.testutils.OrderData
-import org.junit.Test
-
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Ignore
-import kotlin.test.fail
+import org.junit.Test
 
 class OrdersProcessorTest {
 
