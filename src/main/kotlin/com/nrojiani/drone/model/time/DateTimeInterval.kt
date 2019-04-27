@@ -1,4 +1,4 @@
-package com.nrojiani.drone.utils
+package com.nrojiani.drone.model.time
 
 import com.nrojiani.drone.utils.extensions.secondsBetween
 import java.time.Duration

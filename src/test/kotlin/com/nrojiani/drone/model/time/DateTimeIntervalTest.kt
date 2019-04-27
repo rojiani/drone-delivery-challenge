@@ -1,5 +1,7 @@
-package com.nrojiani.drone.utils
+package com.nrojiani.drone.model.time
 
+import com.nrojiani.drone.utils.daysToSeconds
+import com.nrojiani.drone.utils.minsToSeconds
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

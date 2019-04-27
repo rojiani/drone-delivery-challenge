@@ -1,7 +1,10 @@
-package com.nrojiani.drone.utils
+package com.nrojiani.drone.model.time
 
 import com.nrojiani.drone.model.DRONE_DELIVERY_OFF_HOURS
 import com.nrojiani.drone.model.DRONE_DELIVERY_OPERATING_HOURS
+import com.nrojiani.drone.utils.daysToSeconds
+import com.nrojiani.drone.utils.hoursToSeconds
+import com.nrojiani.drone.utils.minsToSeconds
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -11,10 +14,13 @@ import kotlin.test.assertFalse
 
 class TimeIntervalTest {
     private val startTime = LocalTime.parse("07:00:00")
-    private val positiveInterval = TimeInterval(start = startTime, duration = Duration.ofMinutes(30))
-    private val zeroInterval = TimeInterval(start = startTime, duration = Duration.ofSeconds(0))
+    private val positiveInterval =
+        TimeInterval(start = startTime, duration = Duration.ofMinutes(30))
+    private val zeroInterval =
+        TimeInterval(start = startTime, duration = Duration.ofSeconds(0))
     private val singleDay = TimeInterval(start = startTime, duration = Duration.ofDays(1))
-    private val negativeInterval = TimeInterval(start = startTime, duration = Duration.ofMinutes(-30))
+    private val negativeInterval =
+        TimeInterval(start = startTime, duration = Duration.ofMinutes(-30))
 
     @Test
     fun seconds() {

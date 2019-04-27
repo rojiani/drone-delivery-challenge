@@ -1,4 +1,4 @@
-package com.nrojiani.drone.utils
+package com.nrojiani.drone.model.time
 
 import java.time.Duration
 import java.time.LocalTime
