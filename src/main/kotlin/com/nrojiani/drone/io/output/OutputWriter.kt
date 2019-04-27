@@ -6,10 +6,14 @@ import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+/**
+ * Responsible for the writing an output file.
+ */
 class OutputWriter(
     private val scheduledDeliveries: List<DroneDelivery>,
     private val nps: Double
 ) {
+
     fun writeOutputFile() {
         val file = File(outputFilepath)
 
