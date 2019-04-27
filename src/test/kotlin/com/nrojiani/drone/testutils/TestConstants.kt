@@ -52,13 +52,13 @@ object OrderData {
     )
 
     @JvmField
-    val PENDING_ORDER_1 = PendingDeliveryOrder(ORDER_1, TransitTime(724L))
+    val PENDING_ORDER_1 = PendingDeliveryOrder(ORDER_1, TransitTime(725L))
     @JvmField
     val PENDING_ORDER_2 = PendingDeliveryOrder(ORDER_2, TransitTime(216L))
     @JvmField
     val PENDING_ORDER_3 = PendingDeliveryOrder(ORDER_3, TransitTime(3029L))
     @JvmField
-    val PENDING_ORDER_4 = PendingDeliveryOrder(ORDER_4, TransitTime(724L))
+    val PENDING_ORDER_4 = PendingDeliveryOrder(ORDER_4, TransitTime(725L))
 
     @JvmField
     val ORDERS: List<Order> = listOf(ORDER_1, ORDER_2, ORDER_3, ORDER_4)

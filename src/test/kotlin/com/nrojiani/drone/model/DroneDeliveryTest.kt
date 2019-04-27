@@ -23,7 +23,7 @@ class DroneDeliveryTest {
     @Test
     fun timeDroneDeparted() {
         assertEquals(
-            LocalDateTime.of(TODAY, LocalTime.parse("06:07:13")),
+            LocalDateTime.of(TODAY, LocalTime.parse("06:07:12")),
             droneDelivery.timeDroneDeparted
         )
     }
@@ -31,7 +31,7 @@ class DroneDeliveryTest {
     @Test
     fun timeDroneReturned() {
         assertEquals(
-            LocalDateTime.of(TODAY, LocalTime.parse("06:31:21")),
+            LocalDateTime.of(TODAY, LocalTime.parse("06:31:22")),
             droneDelivery.timeDroneReturned
         )
     }

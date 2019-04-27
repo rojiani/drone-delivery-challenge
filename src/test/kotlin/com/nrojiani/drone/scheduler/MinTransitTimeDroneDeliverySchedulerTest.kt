@@ -13,21 +13,11 @@ class MinTransitTimeDroneDeliverySchedulerTest {
 
     private val droneDeliveryScheduler = MinTransitTimeDeliveryScheduler()
 
-    // TODO investigate discrepancy b/t appDeliveryTimes & unitTestDeliveryTimes
-    // When running app
-    private val appDeliveryTimes = listOf(
+    private val expectedDeliveryTimes = listOf(
         LocalTime.parse("06:03:36"),
         LocalTime.parse("06:19:17"),
         LocalTime.parse("06:43:27"),
         LocalTime.parse("07:46:01")
-    )
-
-    // When running unit test. Unclear what the cause of discrepancy is... TODO
-    private val unitTestDeliveryTimes = listOf(
-        LocalTime.parse("06:03:36"),
-        LocalTime.parse("06:19:16"),
-        LocalTime.parse("06:43:24"),
-        LocalTime.parse("07:45:57")
     )
 
     @Test
@@ -39,7 +29,7 @@ class MinTransitTimeDroneDeliverySchedulerTest {
 
         // Expected delivery times
         assertEquals(
-            unitTestDeliveryTimes,
+            expectedDeliveryTimes,
             scheduled.map { it.timeOrderDelivered.toLocalTime() }
         )
     }
