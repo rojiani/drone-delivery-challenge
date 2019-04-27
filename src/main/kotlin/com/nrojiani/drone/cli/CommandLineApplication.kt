@@ -65,9 +65,8 @@ class CommandLineApplication(private val args: Array<String>) : KodeinAware {
         // Produce a list of Promoter Scores
         val predictedRecommendations: List<PredictedRecommendation> = deliveryTimes.values.map(::fromDeliveryTime)
 
-        val nps = calculateNPS(predictedRecommendations)
-
         // Write output file
-        OutputWriter(deliveries, nps).writeOutputFile()
+        OutputWriter(deliveries, calculateNPS(predictedRecommendations))
+            .writeOutputFile()
     }
 }
