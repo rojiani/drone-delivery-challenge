@@ -70,5 +70,4 @@ class CommandLineApplication(private val args: Array<String>) : KodeinAware {
         // Write output file
         OutputWriter(deliveries, nps).writeOutputFile()
     }
-
 }

@@ -1,3 +1,5 @@
+@file:JvmName("DeliverySchedulingModule")
+
 package com.nrojiani.drone.di
 
 import com.nrojiani.drone.model.DRONE_DELIVERY_OPERATING_HOURS
@@ -16,7 +18,6 @@ import org.kodein.di.generic.singleton
  * Dependencies related to calculating and scheduling deliveries.
  */
 val deliverySchedulingModule = Kodein.Module("Delivery Scheduling Module") {
-
     bind<TransitTimeCalculator>() with provider {
         TransitTimeCalculator(DRONE_SPEED_BLOCKS_PER_SECOND)
     }

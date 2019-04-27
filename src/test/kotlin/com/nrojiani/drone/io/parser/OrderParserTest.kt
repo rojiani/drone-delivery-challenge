@@ -2,7 +2,7 @@ package com.nrojiani.drone.io.parser
 
 import com.nrojiani.drone.model.Coordinate
 import com.nrojiani.drone.model.order.Order
-import com.nrojiani.drone.testutils.ORDERS
+import com.nrojiani.drone.testutils.OrderData.ORDERS
 import com.nrojiani.drone.testutils.TEST_INPUT_FILEPATH
 import org.junit.Assert.assertEquals
 import org.junit.Test

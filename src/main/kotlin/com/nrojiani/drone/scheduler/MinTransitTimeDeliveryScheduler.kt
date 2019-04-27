@@ -9,11 +9,11 @@ import java.time.LocalDateTime
  * Schedules deliveries based on distance.
  */
 class MinTransitTimeDeliveryScheduler : DeliveryScheduler {
-    override fun scheduleDeliveries(orders: List<PendingDeliveryOrder>): List<DroneDelivery> {
-        if (orders.isEmpty()) return emptyList()
+    override fun scheduleDeliveries(pendingOrders: List<PendingDeliveryOrder>): List<DroneDelivery> {
+        if (pendingOrders.isEmpty()) return emptyList()
 
-        val sortedByTransitTime = ordersSortedByTransitTime(orders)
-        val date = orders.first().dateOrderPlaced
+        val sortedByTransitTime = ordersSortedByTransitTime(pendingOrders)
+        val date = pendingOrders.first().dateOrderPlaced
         return schedule(
             sortedByTransitTime, LocalDateTime.of(date, DRONE_DELIVERY_OPERATING_HOURS.start)
         )

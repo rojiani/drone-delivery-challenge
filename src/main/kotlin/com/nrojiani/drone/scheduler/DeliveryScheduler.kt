@@ -9,5 +9,5 @@ interface DeliveryScheduler {
      * Given a list of orders, calculate time & date data for each order.
      * Return a list of [DroneDelivery], which consists of [Order] and time-related data.
      */
-    fun scheduleDeliveries(orders: List<PendingDeliveryOrder>): List<DroneDelivery>
+    fun scheduleDeliveries(pendingOrders: List<PendingDeliveryOrder>): List<DroneDelivery>
 }

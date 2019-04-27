@@ -1,10 +1,10 @@
 package com.nrojiani.drone.scheduler
 
-import com.nrojiani.drone.testutils.ORDERS_WITH_TRANSIT_TIMES
-import com.nrojiani.drone.testutils.PENDING_ORDER_1
-import com.nrojiani.drone.testutils.PENDING_ORDER_2
-import com.nrojiani.drone.testutils.PENDING_ORDER_3
-import com.nrojiani.drone.testutils.PENDING_ORDER_4
+import com.nrojiani.drone.testutils.OrderData.ORDERS_WITH_TRANSIT_TIMES
+import com.nrojiani.drone.testutils.OrderData.PENDING_ORDER_1
+import com.nrojiani.drone.testutils.OrderData.PENDING_ORDER_2
+import com.nrojiani.drone.testutils.OrderData.PENDING_ORDER_3
+import com.nrojiani.drone.testutils.OrderData.PENDING_ORDER_4
 import org.junit.Test
 import java.time.LocalTime
 import kotlin.test.assertEquals

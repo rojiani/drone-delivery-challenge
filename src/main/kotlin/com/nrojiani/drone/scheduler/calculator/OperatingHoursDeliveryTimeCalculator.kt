@@ -1,54 +1,49 @@
 package com.nrojiani.drone.scheduler.calculator
 
-import com.nrojiani.drone.utils.extensions.isInShortTimeInterval
-import com.nrojiani.drone.utils.extensions.isSameDayAs
 import com.nrojiani.drone.model.delivery.DroneDelivery
-import com.nrojiani.drone.model.delivery.ShortTimeInterval
+import com.nrojiani.drone.scheduler.calculator.OperatingHoursDeliveryTimeCalculator.OrderPlacementTime.AFTER
+import com.nrojiani.drone.scheduler.calculator.OperatingHoursDeliveryTimeCalculator.OrderPlacementTime.BEFORE
+import com.nrojiani.drone.scheduler.calculator.OperatingHoursDeliveryTimeCalculator.OrderPlacementTime.DURING
+import com.nrojiani.drone.utils.TimeInterval
+import com.nrojiani.drone.utils.extensions.dateAndTime
 import java.time.Duration
-import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 /**
  * Calculates the delivery time, not counting hours outside of drone delivery.
  * See Assumptions 4 & 5 in README for details.
  */
-class OperatingHoursDeliveryTimeCalculator(private val operatingHours: ShortTimeInterval) : DeliveryTimeCalculator {
+class OperatingHoursDeliveryTimeCalculator(private val operatingHours: TimeInterval) : DeliveryTimeCalculator {
+
+    /** Time order was placed relative to the [operatingHours] */
+    private enum class OrderPlacementTime { BEFORE, DURING, AFTER }
 
     override fun calculate(droneDelivery: DroneDelivery): Long {
-        val dateTimeOrderPlaced: LocalDateTime = droneDelivery.timeOrderPlaced
-        val dateTimeOrderDelivered: LocalDateTime = droneDelivery.timeOrderDelivered
-        val (dateOrderPlaced, timeOrderPlaced) =
-            dateTimeOrderPlaced.toLocalDate() to dateTimeOrderPlaced.toLocalTime()
-        val (dateOrderDelivered, timeOrderDelivered) =
-            dateTimeOrderDelivered.toLocalDate() to dateTimeOrderDelivered.toLocalTime()
-        val duration = Duration.between(timeOrderPlaced, timeOrderDelivered)
+        val (dateOrderPlaced, timeOrderPlaced) = droneDelivery.timeOrderPlaced.dateAndTime
+        val (dateOrderDelivered, timeOrderDelivered) = droneDelivery.timeOrderDelivered.dateAndTime
 
-        val wasDeliveredSameDay = dateTimeOrderPlaced.isSameDayAs(dateTimeOrderDelivered)
+        val relativeOrderPlacement: OrderPlacementTime = when {
+            timeOrderPlaced < operatingHours.start -> BEFORE
+            timeOrderPlaced in operatingHours -> DURING
+            else -> AFTER
+        }
 
-        val orderPlacedDuringOperatingHours = timeOrderPlaced.isInShortTimeInterval(operatingHours)
-
-        val totalSeconds = dateTimeOrderPlaced.until(dateTimeOrderDelivered, ChronoUnit.SECONDS)
-
-        val offHours = ShortTimeInterval(operatingHours.end, operatingHours.start)
-
-        return when {
-            orderPlacedDuringOperatingHours && wasDeliveredSameDay -> duration.seconds
-            orderPlacedDuringOperatingHours && !wasDeliveredSameDay -> {
+        return when (relativeOrderPlacement) {
+            BEFORE -> {
                 val days = dateOrderPlaced.until(dateOrderDelivered, ChronoUnit.DAYS)
-                totalSeconds - (days * offHours.seconds)
+                (days * operatingHours.seconds) +
+                        Duration.between(operatingHours.start, timeOrderDelivered).seconds
             }
-            !orderPlacedDuringOperatingHours && wasDeliveredSameDay -> {
-                val secondsInoperable = ShortTimeInterval(timeOrderPlaced, operatingHours.start).seconds
-                // println("secondsInoperable = $secondsInoperable")
-                totalSeconds - secondsInoperable
-            }
-            else -> {
-                val secondsInoperableDay1 = ShortTimeInterval(
-                    timeOrderPlaced,
-                    operatingHours.start
-                ).seconds
+            DURING -> {
+                val firstDay = Duration.between(timeOrderPlaced, operatingHours.endExclusive).seconds
+                val lastDay = Duration.between(operatingHours.start, timeOrderDelivered).seconds
                 val days = dateOrderPlaced.until(dateOrderDelivered, ChronoUnit.DAYS)
-                totalSeconds - secondsInoperableDay1 - ((days - 1) * offHours.seconds)
+                firstDay + ((days - 1) * operatingHours.seconds) + lastDay
+            }
+            AFTER -> {
+                val days = dateOrderPlaced.until(dateOrderDelivered, ChronoUnit.DAYS)
+                Duration.between(operatingHours.start, timeOrderDelivered).seconds +
+                        ((days - 1) * operatingHours.seconds)
             }
         }
     }
