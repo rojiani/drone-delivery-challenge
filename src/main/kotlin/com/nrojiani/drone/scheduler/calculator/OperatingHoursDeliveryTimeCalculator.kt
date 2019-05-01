@@ -1,10 +1,10 @@
 package com.nrojiani.drone.scheduler.calculator
 
 import com.nrojiani.drone.model.delivery.DroneDelivery
+import com.nrojiani.drone.model.time.TimeInterval
 import com.nrojiani.drone.scheduler.calculator.OperatingHoursDeliveryTimeCalculator.OrderPlacementTime.AFTER
 import com.nrojiani.drone.scheduler.calculator.OperatingHoursDeliveryTimeCalculator.OrderPlacementTime.BEFORE
 import com.nrojiani.drone.scheduler.calculator.OperatingHoursDeliveryTimeCalculator.OrderPlacementTime.DURING
-import com.nrojiani.drone.model.time.TimeInterval
 import com.nrojiani.drone.utils.extensions.dateAndTime
 import java.time.Duration
 import java.time.temporal.ChronoUnit

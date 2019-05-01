@@ -22,7 +22,10 @@ enum class PredictedRecommendation(val deliveryTimeRange: LongRange) {
         fun fromDeliveryTimeInMinutes(minutes: Long): PredictedRecommendation =
             fromDeliveryTime(seconds = minutes * SECONDS_PER_MINUTE)
 
-        fun fromDeliveryTimeInHours(hours: Double): PredictedRecommendation = fromDeliveryTimeInMinutes(minutes = (hours * MINUTES_PER_HOUR).toLong())
-        fun fromDeliveryTimeInHours(hours: Int): PredictedRecommendation = fromDeliveryTimeInHours(hours = hours.toDouble())
+        fun fromDeliveryTimeInHours(hours: Double): PredictedRecommendation =
+            fromDeliveryTimeInMinutes(minutes = (hours * MINUTES_PER_HOUR).toLong())
+
+        fun fromDeliveryTimeInHours(hours: Int): PredictedRecommendation =
+            fromDeliveryTimeInHours(hours = hours.toDouble())
     }
 }

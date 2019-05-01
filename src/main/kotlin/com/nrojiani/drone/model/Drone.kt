@@ -2,8 +2,8 @@
 
 package com.nrojiani.drone.model
 
-import com.nrojiani.drone.utils.SECONDS_PER_MINUTE
 import com.nrojiani.drone.model.time.TimeInterval
+import com.nrojiani.drone.utils.SECONDS_PER_MINUTE
 import java.time.Duration
 import java.time.LocalTime
 

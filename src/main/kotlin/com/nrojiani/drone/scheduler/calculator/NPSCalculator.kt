@@ -1,8 +1,8 @@
 package com.nrojiani.drone.scheduler.calculator
 
 import com.nrojiani.drone.model.PredictedRecommendation
-import com.nrojiani.drone.model.PredictedRecommendation.PROMOTER
 import com.nrojiani.drone.model.PredictedRecommendation.DETRACTOR
+import com.nrojiani.drone.model.PredictedRecommendation.PROMOTER
 import com.nrojiani.drone.utils.extensions.percentage
 
 /**

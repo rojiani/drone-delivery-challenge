@@ -30,7 +30,7 @@ data class TransitTimeCalculator(private val speed: Double) {
      * [speed].
      */
     fun calculateRoundTripTime(distanceFromSourceToDest: Double): Long =
-            calculateSourceToDestinationTime(distanceFromSourceToDest) * 2
+        calculateSourceToDestinationTime(distanceFromSourceToDest) * 2
 
     /**
      * Calculate the time (in seconds) to travel from [source] to [dest] and then from [dest] to [source]
