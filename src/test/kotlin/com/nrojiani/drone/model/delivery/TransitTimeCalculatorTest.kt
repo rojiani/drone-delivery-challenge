@@ -5,10 +5,10 @@ import com.nrojiani.drone.model.Coordinate
 import com.nrojiani.drone.model.DRONE_SPEED_BLOCKS_PER_SECOND
 import com.nrojiani.drone.testutils.ORIGIN
 import com.nrojiani.drone.utils.SECONDS_PER_MINUTE
-import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlin.math.round
 import kotlin.math.sqrt
+import kotlin.test.assertEquals
 
 class TransitTimeCalculatorTest {
 

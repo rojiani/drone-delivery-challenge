@@ -2,14 +2,14 @@ package com.nrojiani.drone.model.time
 
 import com.nrojiani.drone.utils.daysToSeconds
 import com.nrojiani.drone.utils.minsToSeconds
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class DateTimeIntervalTest {
     private val startDate = LocalDate.of(2019, 4, 26)

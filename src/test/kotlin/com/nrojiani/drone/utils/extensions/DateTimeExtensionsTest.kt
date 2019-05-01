@@ -1,6 +1,5 @@
 package com.nrojiani.drone.utils.extensions
 
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -8,6 +7,7 @@ import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class DateTimeExtensionsTest {
 

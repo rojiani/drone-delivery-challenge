@@ -5,9 +5,9 @@ import com.nrojiani.drone.utils.hoursToSeconds
 import com.nrojiani.drone.utils.minsToSeconds
 import org.junit.Test
 
-import org.junit.Assert.assertEquals
 import java.lang.IllegalArgumentException
 import java.math.BigInteger
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class TimeUtilsTest {

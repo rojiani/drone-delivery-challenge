@@ -5,12 +5,12 @@ import com.nrojiani.drone.model.DRONE_DELIVERY_OPERATING_HOURS
 import com.nrojiani.drone.utils.daysToSeconds
 import com.nrojiani.drone.utils.hoursToSeconds
 import com.nrojiani.drone.utils.minsToSeconds
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.Duration
 import java.time.LocalTime
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class TimeIntervalTest {
     private val startTime = LocalTime.parse("07:00:00")

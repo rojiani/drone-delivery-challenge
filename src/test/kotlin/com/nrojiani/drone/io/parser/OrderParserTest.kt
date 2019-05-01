@@ -4,12 +4,12 @@ import com.nrojiani.drone.model.Coordinate
 import com.nrojiani.drone.model.order.Order
 import com.nrojiani.drone.testutils.OrderData.ORDERS
 import com.nrojiani.drone.testutils.TEST_INPUT_FILEPATH
-import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeParseException
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class OrderParserTest {

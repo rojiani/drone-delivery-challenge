@@ -4,8 +4,8 @@ import com.nrojiani.drone.model.PredictedRecommendation.DETRACTOR
 import com.nrojiani.drone.model.PredictedRecommendation.NEUTRAL
 import com.nrojiani.drone.model.PredictedRecommendation.PROMOTER
 import com.nrojiani.drone.utils.SECONDS_PER_MINUTE
-import org.junit.Assert.assertEquals
 import org.junit.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class PredictedRecommendationTest {

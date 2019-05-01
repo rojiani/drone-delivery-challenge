@@ -1,8 +1,8 @@
 package com.nrojiani.drone.io
 
-import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.FileNotFoundException
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class IOTest {
