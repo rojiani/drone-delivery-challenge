@@ -2,10 +2,10 @@ package com.nrojiani.drone.io.parser
 
 import com.nrojiani.drone.model.Coordinate
 import com.nrojiani.drone.model.order.Order
-import com.nrojiani.drone.model.time.UTC_ZONE_ID
 import com.nrojiani.drone.testutils.OrderData.ORDERS
 import com.nrojiani.drone.testutils.TEST_INPUT_FILEPATH
 import com.nrojiani.drone.testutils.TODAY
+import com.nrojiani.drone.utils.UTC_ZONE_ID
 import org.junit.Test
 import java.time.LocalTime
 import java.time.ZonedDateTime

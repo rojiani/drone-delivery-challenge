@@ -3,12 +3,12 @@ package com.nrojiani.drone.model.delivery
 import com.nrojiani.drone.model.Coordinate
 import com.nrojiani.drone.model.DRONE_DELIVERY_OPERATING_HOURS
 import com.nrojiani.drone.model.order.PendingDeliveryOrder
-import com.nrojiani.drone.model.time.UTC_ZONE_ID
 import com.nrojiani.drone.scheduler.calculator.DeliveryTimeCalculator
 import com.nrojiani.drone.scheduler.calculator.OperatingHoursDeliveryTimeCalculator
 import com.nrojiani.drone.testutils.OrderData.ORDER_4
 import com.nrojiani.drone.testutils.OrderData.PENDING_ORDER_4
 import com.nrojiani.drone.testutils.TODAY
+import com.nrojiani.drone.utils.UTC_ZONE_ID
 import com.nrojiani.drone.utils.hoursToSeconds
 import com.nrojiani.drone.utils.minsToSeconds
 import org.junit.Test
@@ -98,7 +98,10 @@ class OperatingHoursDeliveryTimeCalculatorTest {
         // open -> delivered      06:00:00 -> 08:00:00 = 02:00:00 => 7,200 s
         val delivery = DroneDelivery(
             orderWithTransitTime = orderBeforeOp,
-            timeOrderDelivered = ZonedDateTime.of(ORDER_4.dateOrderPlaced, LocalTime.parse("08:00:00"), UTC_ZONE_ID)
+            timeOrderDelivered = ZonedDateTime.of(
+                ORDER_4.dateOrderPlaced, LocalTime.parse("08:00:00"),
+                UTC_ZONE_ID
+            )
         )
         assertEquals(hoursToSeconds(2), dtCalculator.calculate(delivery))
     }

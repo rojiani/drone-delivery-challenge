@@ -7,7 +7,7 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        // classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
+        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
     }
 }
 
@@ -15,16 +15,20 @@ group 'com.nrojiani.drone'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'kotlin'
+apply plugin: 'kotlin-allopen'
 apply plugin: 'idea'
 apply plugin: 'application'
-//apply plugin: 'org.jetbrains.dokka'
+
+allOpen {
+    // allows mocking for classes w/o directly opening them for release builds
+    annotation("com.nrojiani.drone.utils.Mockable")
+}
 
 sourceCompatibility = 1.8
 
 repositories {
     jcenter()
     mavenCentral()
-    maven { url 'https://jitpack.io' }
 }
 
 configurations {
@@ -45,10 +49,12 @@ dependencies {
     // ktlint (linter & formatter)
     ktlint "com.pinterest:ktlint:$ktlintVersion"
 
-    // JUnit
+    // Unit Testing
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.jetbrains.kotlin:kotlin-test"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit"
+    testImplementation "org.mockito:mockito-all:$mockitoVersion"
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion"
 }
 
 compileKotlin {
@@ -83,9 +89,6 @@ task ktlint(type: JavaExec, group: "verification") {
     classpath = configurations.ktlint
     main = "com.pinterest.ktlint.Main"
     args "src/**/*.kt"
-    // to generate report in checkstyle format prepend following args:
-    // "--reporter=plain", "--reporter=checkstyle,output=${buildDir}/ktlint.xml"
-    // see https://github.com/pinterest/ktlint#usage for more
 }
 check.dependsOn ktlint
 

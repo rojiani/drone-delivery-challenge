@@ -1,11 +1,30 @@
 package com.nrojiani.drone.model.time
 
 import java.time.Duration
+import java.time.LocalDate
 import java.time.LocalTime
+import java.time.OffsetTime
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 
-data class TimeInterval(val start: LocalTime, val duration: Duration) {
+/**
+ * Time interval with zoned times (date agnostic).
+ */
+data class TimeInterval(
+    val start: OffsetTime,
+    val duration: Duration
+) {
+    val endExclusive: OffsetTime = start.plus(duration)
+    val offset: ZoneOffset = start.offset
 
-    val endExclusive: LocalTime = start.plus(duration)
+//    val localStartTime: LocalTime = start.toLocalTime()
+//    val localEndExclusiveTime: LocalTime = endExclusive.toLocalTime()
+//    val localTimes: Pair<LocalTime, LocalTime> = localStartTime to localEndExclusiveTime
+
+    /**
+     * Alternate constructor.
+     */
+    constructor(start: LocalTime, duration: Duration, offset: ZoneOffset) : this(start.atOffset(offset), duration)
 
     /**
      * The number of seconds from [start] until [endExclusive].
@@ -13,10 +32,16 @@ data class TimeInterval(val start: LocalTime, val duration: Duration) {
      */
     val seconds: Long get() = duration.seconds
 
-    operator fun contains(time: LocalTime): Boolean {
+    operator fun contains(time: OffsetTime): Boolean {
         val a = if (start <= endExclusive) start else endExclusive
         val b = if (start > endExclusive) start else endExclusive
 
         return (a <= time) && (time <= b)
     }
+
+    fun toZonedDateTimeInterval(startDate: LocalDate, endDate: LocalDate): ZonedDateTimeInterval =
+        ZonedDateTimeInterval(
+            start = ZonedDateTime.of(startDate, start.toLocalTime(), offset),
+            end = ZonedDateTime.of(endDate, endExclusive.toLocalTime(), offset)
+        )
 }

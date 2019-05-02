@@ -5,7 +5,7 @@ package com.nrojiani.drone.io.parser
 import com.nrojiani.drone.io.readFileLines
 import com.nrojiani.drone.model.Coordinate
 import com.nrojiani.drone.model.order.Order
-import com.nrojiani.drone.model.time.UTC_ZONE_ID
+import com.nrojiani.drone.utils.UTC_ZONE_ID
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZonedDateTime

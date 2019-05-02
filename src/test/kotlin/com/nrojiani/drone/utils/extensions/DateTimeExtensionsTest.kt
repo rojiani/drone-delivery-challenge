@@ -1,12 +1,18 @@
 package com.nrojiani.drone.utils.extensions
 
-import com.nrojiani.drone.model.time.UTC_ZONE_ID
+import com.nrojiani.drone.utils.DEFAULT_CLOCK
+import com.nrojiani.drone.utils.DEFAULT_ZONE_OFFSET
+import com.nrojiani.drone.utils.EST_ZONE_ID
+import com.nrojiani.drone.utils.EST_ZONE_OFFSET
+import com.nrojiani.drone.utils.UTC_ZONE_ID
 import com.nrojiani.drone.utils.hoursToSeconds
 import org.junit.Test
+import java.time.Clock
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import kotlin.test.assertEquals
@@ -35,9 +41,24 @@ class DateTimeExtensionsTest {
 
     @Test
     fun `dateAndTime - ZonedDateTime`() {
-        val (date, time) = zonedDateTime1.dateAndTime
+        val (date, time) = zonedDateTime1.localDateAndTime
         assertEquals(LocalDate.parse("2019-04-26"), date)
         assertEquals(time1, time)
+    }
+
+    @Test
+    fun dateTimeOffset() {
+        val (date, time, offset) = zonedDateTime1.dateTimeOffset
+        assertEquals(LocalDate.parse("2019-04-26"), date)
+        assertEquals(time1, time)
+        assertEquals(DEFAULT_ZONE_OFFSET, offset)
+    }
+
+    @Test
+    fun dateAndOffsetTime() {
+        val (date, time) = zonedDateTime1.dateAndTime
+        assertEquals(LocalDate.parse("2019-04-26"), date)
+        assertEquals(time1.atOffset(DEFAULT_ZONE_OFFSET), time)
     }
 
     @Test
@@ -70,7 +91,7 @@ class DateTimeExtensionsTest {
             5,
             ZonedDateTime.of(date1, time3, UTC_ZONE_ID)
                 .timeBetween(
-                    ZonedDateTime.of(date1, time3, ZoneId.of("EST", ZoneId.SHORT_IDS)),
+                    ZonedDateTime.of(date1, time3, EST_ZONE_ID),
                     ChronoUnit.HOURS
                 )
         )
@@ -92,5 +113,19 @@ class DateTimeExtensionsTest {
     fun `secondsBetween - LocalTime`() {
         assertEquals(48853, time1.secondsBetween(time2))
         assertEquals(1, LocalTime.parse("23:59:59").secondsBetween(LocalTime.parse("00:00:00")))
+    }
+
+    @Test
+    fun toZoneOffset() {
+        assertEquals(ZoneOffset.UTC, UTC_ZONE_ID.toZoneOffset())
+        assertEquals(EST_ZONE_OFFSET, EST_ZONE_ID.toZoneOffset())
+    }
+
+    @Test
+    fun zoneOffset() {
+        assertEquals(ZoneOffset.UTC, DEFAULT_CLOCK.zoneOffset)
+
+        val clockEST = Clock.system(EST_ZONE_ID)
+        assertEquals(EST_ZONE_OFFSET, clockEST.zoneOffset)
     }
 }

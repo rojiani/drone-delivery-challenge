@@ -1,9 +1,8 @@
 package com.nrojiani.drone.utils.extensions
 
 import com.nrojiani.drone.testutils.EPSILON
-import org.junit.Test
-
 import org.junit.Assert.assertEquals
+import org.junit.Test
 
 class CollectionExtensionsTest {
 

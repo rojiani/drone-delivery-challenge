@@ -2,10 +2,15 @@
 
 package com.nrojiani.drone.utils.extensions
 
+import java.time.Clock
 import java.time.Duration
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.OffsetTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import java.time.temporal.Temporal
@@ -23,20 +28,48 @@ import kotlin.math.abs
  *
  * Example:
  * ```
+ * val (date, time) = myZonedDateTime.localDateAndTime
+ * ```
+ */
+val ZonedDateTime.localDateAndTime: Pair<LocalDate, LocalTime> get() = toLocalDate() to toLocalTime()
+
+/**
+ * Returns the [LocalDate] and [OffsetTime] as a Pair
+ *
+ * Example:
+ * ```
  * val (date, time) = myZonedDateTime.dateAndTime
  * ```
  */
-val ZonedDateTime.dateAndTime: Pair<LocalDate, LocalTime> get() = toLocalDate() to toLocalTime()
+val ZonedDateTime.dateAndTime: Pair<LocalDate, OffsetTime> get() = toLocalDate() to toLocalTime().atOffset(offset)
 
 /**
  * Returns the [LocalDate] and [LocalTime] as a Pair
  *
  * Example:
  * ```
- * val (date, time) = myLocalDateTime.dateAndTime
+ * val (date, time) = myLocalDateTime.localDateAndTime
  * ```
  */
 val LocalDateTime.dateAndTime: Pair<LocalDate, LocalTime> get() = toLocalDate() to toLocalTime()
+
+/**
+ * Returns the [LocalDate], [LocalTime], & [ZoneOffset] as a Triple
+ *
+ * Example:
+ * ```
+ * val (date, time) = myZonedDateTime.dateTimeOffset
+ * ```
+ */
+val ZonedDateTime.dateTimeOffset: Triple<LocalDate, LocalTime, ZoneOffset>
+    get() = Triple(
+        toLocalDate(), toLocalTime(), offset
+    )
+
+/**
+ * Get the [ZoneOffset] from the Clock's [ZoneId].
+ */
+val Clock.zoneOffset: ZoneOffset get() = zone.toZoneOffset()
 
 /**
  * Return the time between the two DateTimes in the specified [ChronoUnit].
@@ -61,3 +94,8 @@ fun LocalTime.secondsBetween(laterTime: LocalTime) = if (this < laterTime) {
 } else {
     LocalDateTime.of(LocalDate.now(), this).secondsBetween(LocalDateTime.of(LocalDate.now().plusDays(1), laterTime))
 }
+
+/**
+ * Get the [ZoneOffset] from a [ZoneId].
+ */
+fun ZoneId.toZoneOffset(): ZoneOffset = rules.getOffset(Instant.now())

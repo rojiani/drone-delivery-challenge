@@ -21,7 +21,8 @@ class CoordinateTest {
         assertEquals(7.496665925596525, ORIGIN.distanceTo(Coordinate(1.2, 7.4)), EPSILON)
 
         assertEquals(sqrt(8.0), Coordinate(2.0, 2.0).distanceTo(Coordinate(4.0, 4.0)), EPSILON)
-        assertEquals(sqrt(25.0 + 36.0), Coordinate(2.0, 3.0).distanceTo(Coordinate(7.0, 9.0)),
+        assertEquals(
+            sqrt(25.0 + 36.0), Coordinate(2.0, 3.0).distanceTo(Coordinate(7.0, 9.0)),
             EPSILON
         )
     }

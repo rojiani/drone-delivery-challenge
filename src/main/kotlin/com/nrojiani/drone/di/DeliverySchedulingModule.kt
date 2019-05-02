@@ -9,11 +9,11 @@ import com.nrojiani.drone.scheduler.MinTransitTimeDeliveryScheduler
 import com.nrojiani.drone.scheduler.calculator.DeliveryTimeCalculator
 import com.nrojiani.drone.scheduler.calculator.OperatingHoursDeliveryTimeCalculator
 import com.nrojiani.drone.scheduler.calculator.TransitTimeCalculator
+import com.nrojiani.drone.utils.DEFAULT_CLOCK
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.provider
 import org.kodein.di.generic.singleton
-import java.time.Clock
 
 /**
  * Dependencies related to calculating and scheduling deliveries. The dependencies are constructed using the
@@ -29,6 +29,6 @@ val droneDeliverySchedulingModule = Kodein.Module("Delivery Scheduling Module") 
     }
 
     bind<DeliveryScheduler>() with singleton {
-        MinTransitTimeDeliveryScheduler(DRONE_DELIVERY_OPERATING_HOURS, Clock.systemUTC())
+        MinTransitTimeDeliveryScheduler(DRONE_DELIVERY_OPERATING_HOURS, DEFAULT_CLOCK)
     }
 }

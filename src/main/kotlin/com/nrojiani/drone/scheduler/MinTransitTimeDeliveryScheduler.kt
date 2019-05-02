@@ -4,17 +4,19 @@ import com.nrojiani.drone.model.DRONE_DELIVERY_OPERATING_HOURS
 import com.nrojiani.drone.model.delivery.DroneDelivery
 import com.nrojiani.drone.model.order.PendingDeliveryOrder
 import com.nrojiani.drone.model.time.TimeInterval
-import com.nrojiani.drone.model.time.UTC_ZONE_ID
-import com.nrojiani.drone.utils.extensions.dateAndTime
+import com.nrojiani.drone.utils.DEFAULT_CLOCK
+import com.nrojiani.drone.utils.Mockable
+import com.nrojiani.drone.utils.extensions.zoneOffset
 import java.time.Clock
 import java.time.ZonedDateTime
 
 /**
  * Schedules deliveries based on distance.
  */
+@Mockable
 class MinTransitTimeDeliveryScheduler(
     val operatingHours: TimeInterval,
-    private val clock: Clock = Clock.systemUTC()
+    private val clock: Clock = DEFAULT_CLOCK
 ) : DeliveryScheduler {
 
     /**
@@ -23,19 +25,25 @@ class MinTransitTimeDeliveryScheduler(
      */
     private var rolloverOrders: List<PendingDeliveryOrder> = ArrayList()
 
+    /**
+     * Get the current time using the [clock] specified when creating an instance of this class.
+     * This exists solely for the purpose of mocking the current time.
+     */
+    internal val currentZonedDateTime = ZonedDateTime.now(clock)
+
     override fun scheduleDeliveries(pendingOrders: List<PendingDeliveryOrder>): List<DroneDelivery> {
         if (pendingOrders.isEmpty()) return emptyList()
 
         val scheduled: MutableList<DroneDelivery> = ArrayList()
         val sortedByTransitTime = ordersSortedByTransitTime(pendingOrders)
-        val earliestDeliveryStartTime = calculateFirstDeliveryStartTime(ZonedDateTime.now(clock))
+        val earliestDeliveryStartTime = calculateFirstDeliveryStartTime()
 
         do {
             val (newlyScheduled, rollovers) = schedule(
                 sortedOrders = sortedByTransitTime,
                 startTime = ZonedDateTime.of(
                     earliestDeliveryStartTime.toLocalDate(),
-                    DRONE_DELIVERY_OPERATING_HOURS.start,
+                    DRONE_DELIVERY_OPERATING_HOURS.start.toLocalTime(),
                     clock.zone
                 )
             )
@@ -76,7 +84,8 @@ class MinTransitTimeDeliveryScheduler(
     ): SchedulingResult {
         var time: ZonedDateTime = startTime
 
-        val closingTime = ZonedDateTime.of(startTime.toLocalDate(), operatingHours.endExclusive, clock.zone)
+        val closingTime =
+            ZonedDateTime.of(startTime.toLocalDate(), operatingHours.endExclusive.toLocalTime(), clock.zone)
         val scheduled: MutableList<DroneDelivery> = ArrayList()
 
         sortedOrders.forEachIndexed { i, order ->
@@ -102,16 +111,22 @@ class MinTransitTimeDeliveryScheduler(
     /**
      * TODO
      */
-    internal fun calculateFirstDeliveryStartTime(time: ZonedDateTime): ZonedDateTime {
-        val (currentDate, currentTime) = time.dateAndTime
+    internal fun calculateFirstDeliveryStartTime(): ZonedDateTime {
+        val currentTime: ZonedDateTime = currentZonedDateTime
+
+        // Today's delivery hours
+        val deliveryHours = operatingHours.toZonedDateTimeInterval(
+            currentTime.toLocalDate(), currentTime.toLocalDate()
+        )
 
         return when {
-            currentTime < operatingHours.start ->
-                ZonedDateTime.of(currentDate, operatingHours.start, UTC_ZONE_ID)
-            currentTime in operatingHours ->
-                ZonedDateTime.of(currentDate, currentTime, UTC_ZONE_ID)
-            else ->
-                ZonedDateTime.of(currentDate.plusDays(1), operatingHours.start, UTC_ZONE_ID)
+            currentTime < deliveryHours.start -> deliveryHours.start
+            currentTime in deliveryHours -> currentTime
+            else -> ZonedDateTime.of(
+                currentTime.toLocalDate().plusDays(1),
+                operatingHours.start.toLocalTime(),
+                clock.zoneOffset
+            )
         }
     }
 }

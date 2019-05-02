@@ -94,7 +94,6 @@ Following from _Assumption 1_, I'm assuming that the likelihood of recommending 
 5A. Doesn't exceed 2GB
 5B. Is UTF-8 format
 
-
 TODO: Other Assumptions:
 * Algorithm will always schedule to maximize NPS (not some other metric)
 * Drone can only carry 1 package, & any single order can be fit completely in package.
@@ -108,6 +107,11 @@ TODO: Other Assumptions:
         * time to ascend/descend in altitude to make delivery
         * time to pick up next package
     * These are not necessarily negligible for a realistic model.
+
+TODO DeliveryScheduler input all placed on same day.
+* Rationale: TODO
+
+TODO 6am-10pm UTC
 
 ### Design Decisions/Notes ###
 
