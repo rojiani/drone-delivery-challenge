@@ -2,12 +2,13 @@ package com.nrojiani.drone.io.parser
 
 import com.nrojiani.drone.model.Coordinate
 import com.nrojiani.drone.model.order.Order
+import com.nrojiani.drone.model.time.UTC_ZONE_ID
 import com.nrojiani.drone.testutils.OrderData.ORDERS
 import com.nrojiani.drone.testutils.TEST_INPUT_FILEPATH
+import com.nrojiani.drone.testutils.TODAY
 import org.junit.Test
-import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZonedDateTime
 import java.time.format.DateTimeParseException
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -26,12 +27,12 @@ class OrderParserTest {
                 Order(
                     orderId = "WM001",
                     destination = Coordinate(-5, 11),
-                    orderPlacedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 11, 50))
+                    orderPlacedDateTime = ZonedDateTime.of(TODAY, LocalTime.of(5, 11, 50), UTC_ZONE_ID)
                 ),
                 Order(
                     orderId = "WM002",
                     destination = Coordinate(2, -3),
-                    orderPlacedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 11, 55))
+                    orderPlacedDateTime = ZonedDateTime.of(TODAY, LocalTime.of(5, 11, 55), UTC_ZONE_ID)
                 )
             ), parseOrders(listOf("WM001 N11W5 05:11:50", "WM002 S3E2 05:11:55"))
         )
@@ -43,7 +44,7 @@ class OrderParserTest {
             Order(
                 orderId = "WM001",
                 destination = Coordinate(-5, 11),
-                orderPlacedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 11, 50))
+                orderPlacedDateTime = ZonedDateTime.of(TODAY, LocalTime.of(5, 11, 50), UTC_ZONE_ID)
             ), parseOrder("WM001 N11W5 05:11:50")
         )
     }

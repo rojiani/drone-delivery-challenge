@@ -3,7 +3,7 @@ package com.nrojiani.drone.io.output
 import com.nrojiani.drone.io.OUTPUT_DIR
 import com.nrojiani.drone.model.delivery.DroneDelivery
 import java.io.File
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 /**
@@ -37,9 +37,9 @@ class OutputWriter(
         get() = "$OUTPUT_DIR/output-$formattedTimestamp"
 
     private val formattedTimestamp: String
-        get() = LocalDateTime.now().formattedTime
+        get() = ZonedDateTime.now().formattedTime
 
-    private val LocalDateTime.formattedTime: String
+    private val ZonedDateTime.formattedTime: String
         get() = format(DateTimeFormatter.ofPattern("HH:mm:ss"))
 
     /**

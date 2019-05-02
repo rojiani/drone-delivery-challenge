@@ -4,9 +4,10 @@ import com.nrojiani.drone.model.Coordinate
 import com.nrojiani.drone.model.delivery.TransitTime
 import com.nrojiani.drone.model.order.Order
 import com.nrojiani.drone.model.order.PendingDeliveryOrder
+import com.nrojiani.drone.model.time.UTC_ZONE_ID
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZonedDateTime
 
 /** Maximum tolerated difference when comparing floating-point types for equality. */
 const val EPSILON = 1e-10
@@ -23,32 +24,33 @@ val ORIGIN = Coordinate(0, 0)
 val TODAY: LocalDate = LocalDate.now()
 
 object OrderData {
+
     @JvmField
     val ORDER_1 = Order(
         orderId = "WM001",
         destination = Coordinate(x = -5.0, y = 11.0),
-        orderPlacedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 11, 50))
+        orderPlacedDateTime = ZonedDateTime.of(TODAY, LocalTime.of(5, 11, 50), UTC_ZONE_ID)
     )
 
     @JvmField
     val ORDER_2 = Order(
         orderId = "WM002",
         destination = Coordinate(x = 2.0, y = -3.0),
-        orderPlacedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 11, 55))
+        orderPlacedDateTime = ZonedDateTime.of(TODAY, LocalTime.of(5, 11, 55), UTC_ZONE_ID)
     )
 
     @JvmField
     val ORDER_3 = Order(
         orderId = "WM003",
         destination = Coordinate(x = 50.0, y = 7.0),
-        orderPlacedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 31, 50))
+        orderPlacedDateTime = ZonedDateTime.of(TODAY, LocalTime.of(5, 31, 50), UTC_ZONE_ID)
     )
 
     @JvmField
     val ORDER_4 = Order(
         orderId = "WM004",
         destination = Coordinate(x = 5.0, y = 11.0),
-        orderPlacedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(6, 11, 50))
+        orderPlacedDateTime = ZonedDateTime.of(TODAY, LocalTime.of(6, 11, 50), UTC_ZONE_ID)
     )
 
     @JvmField
@@ -62,7 +64,12 @@ object OrderData {
 
     @JvmField
     val ORDERS: List<Order> = listOf(ORDER_1, ORDER_2, ORDER_3, ORDER_4)
+
     @JvmField
     val ORDERS_WITH_TRANSIT_TIMES: List<PendingDeliveryOrder> =
         listOf(PENDING_ORDER_1, PENDING_ORDER_2, PENDING_ORDER_3, PENDING_ORDER_4)
+
+    @JvmField
+    val ORDERS_SORTED_BY_TRANSIT_TIMES: List<PendingDeliveryOrder> =
+        listOf(PENDING_ORDER_2, PENDING_ORDER_1, PENDING_ORDER_4, PENDING_ORDER_3)
 }

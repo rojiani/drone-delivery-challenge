@@ -6,15 +6,27 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
+import java.time.temporal.Temporal
 import kotlin.math.abs
 
 /*
- * This file contains extension functions for the Java 8 Date/Time API (LocalDateTime, LocalTime, LocalDate, etc.).
+ * This file contains extension functions for the Java 8 Date/Time API (LocalTime, LocalDate, Temporal, etc.).
  *
  * Note: in a "real-world" project, it would be preferable to keep extension functions
  * like this in a separate library.
  */
+
+/**
+ * Returns the [LocalDate] and [LocalTime] as a Pair
+ *
+ * Example:
+ * ```
+ * val (date, time) = myZonedDateTime.dateAndTime
+ * ```
+ */
+val ZonedDateTime.dateAndTime: Pair<LocalDate, LocalTime> get() = toLocalDate() to toLocalTime()
 
 /**
  * Returns the [LocalDate] and [LocalTime] as a Pair
@@ -27,21 +39,16 @@ import kotlin.math.abs
 val LocalDateTime.dateAndTime: Pair<LocalDate, LocalTime> get() = toLocalDate() to toLocalTime()
 
 /**
- * Return true if [other] has the same Date as the receiver.
- */
-fun LocalDateTime.isSameDayAs(other: LocalDateTime): Boolean = this.toLocalDate().isEqual(other.toLocalDate())
-
-/**
  * Return the time between the two DateTimes in the specified [ChronoUnit].
  * Non-directional (always non-negative).
  */
-fun LocalDateTime.timeBetween(other: LocalDateTime, unit: ChronoUnit) = abs(unit.between(this, other))
+fun Temporal.timeBetween(other: Temporal, unit: ChronoUnit) = abs(unit.between(this, other))
 
 /**
  * Return the seconds between the two DateTimes.
  * Non-directional (always non-negative).
  */
-fun LocalDateTime.secondsBetween(other: LocalDateTime) = timeBetween(other, ChronoUnit.SECONDS)
+fun Temporal.secondsBetween(other: Temporal) = timeBetween(other, ChronoUnit.SECONDS)
 
 /**
  * Return the seconds between the two LocalTimes.

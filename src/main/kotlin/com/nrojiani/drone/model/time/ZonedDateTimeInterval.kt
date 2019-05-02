@@ -2,11 +2,11 @@ package com.nrojiani.drone.model.time
 
 import com.nrojiani.drone.utils.extensions.secondsBetween
 import java.time.Duration
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
-data class DateTimeInterval(val start: LocalDateTime, val duration: Duration) {
+data class ZonedDateTimeInterval(val start: ZonedDateTime, val duration: Duration) {
 
-    val endExclusive: LocalDateTime = start.plus(duration)
+    val endExclusive: ZonedDateTime = start.plus(duration)
 
     /**
      * The number of seconds from [start] until [endExclusive].
@@ -14,7 +14,7 @@ data class DateTimeInterval(val start: LocalDateTime, val duration: Duration) {
      */
     val seconds: Long get() = start.secondsBetween(endExclusive)
 
-    operator fun contains(time: LocalDateTime): Boolean {
+    operator fun contains(time: ZonedDateTime): Boolean {
         val a = if (start <= endExclusive) start else endExclusive
         val b = if (start > endExclusive) start else endExclusive
 

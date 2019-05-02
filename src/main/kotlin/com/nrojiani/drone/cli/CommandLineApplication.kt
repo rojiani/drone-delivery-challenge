@@ -1,6 +1,6 @@
 package com.nrojiani.drone.cli
 
-import com.nrojiani.drone.di.deliverySchedulingModule
+import com.nrojiani.drone.di.droneDeliverySchedulingModule
 import com.nrojiani.drone.io.output.OutputWriter
 import com.nrojiani.drone.io.parser.parseOrdersFromFile
 import com.nrojiani.drone.model.DRONE_LAUNCH_FACILITY_LOCATION
@@ -32,7 +32,7 @@ class CommandLineApplication(private val args: Array<String>) : KodeinAware {
             ArgParser(args).parseInto(::CommandLineArguments)
         }
 
-        import(deliverySchedulingModule)
+        import(droneDeliverySchedulingModule)
     }
 
     // Lazily properties (resolved by DI container)

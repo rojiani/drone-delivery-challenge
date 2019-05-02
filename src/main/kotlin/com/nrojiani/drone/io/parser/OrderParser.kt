@@ -5,9 +5,10 @@ package com.nrojiani.drone.io.parser
 import com.nrojiani.drone.io.readFileLines
 import com.nrojiani.drone.model.Coordinate
 import com.nrojiani.drone.model.order.Order
+import com.nrojiani.drone.model.time.UTC_ZONE_ID
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZonedDateTime
 import java.time.format.DateTimeParseException
 
 /**
@@ -33,7 +34,8 @@ internal fun parseOrder(orderInput: String): Order {
     val coordinates = parseRawCoordinates(rawCoordinates)
     val time = parseTimestamp(timestamp)
     // Bundle time with today's date (for rollover)
-    val dateTime = LocalDateTime.of(LocalDate.now(), time)
+    // TODO - optimally the input should have both date & time
+    val dateTime = ZonedDateTime.of(LocalDate.now(), time, UTC_ZONE_ID)
 
     return Order(orderId, coordinates, dateTime)
 }

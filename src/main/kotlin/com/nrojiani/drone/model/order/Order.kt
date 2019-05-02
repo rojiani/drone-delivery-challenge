@@ -2,7 +2,7 @@ package com.nrojiani.drone.model.order
 
 import com.nrojiani.drone.model.Coordinate
 import java.time.LocalDate
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 /**
  * Basic data about an order.
@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 data class Order(
     val orderId: String,
     val destination: Coordinate,
-    val orderPlacedDateTime: LocalDateTime
+    val orderPlacedDateTime: ZonedDateTime
 ) {
     val dateOrderPlaced: LocalDate = orderPlacedDateTime.toLocalDate()
 }

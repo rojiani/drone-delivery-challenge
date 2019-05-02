@@ -3,6 +3,7 @@ package com.nrojiani.drone.model.delivery
 import com.nrojiani.drone.model.Coordinate
 import com.nrojiani.drone.model.DRONE_DELIVERY_OPERATING_HOURS
 import com.nrojiani.drone.model.order.PendingDeliveryOrder
+import com.nrojiani.drone.model.time.UTC_ZONE_ID
 import com.nrojiani.drone.scheduler.calculator.DeliveryTimeCalculator
 import com.nrojiani.drone.scheduler.calculator.OperatingHoursDeliveryTimeCalculator
 import com.nrojiani.drone.testutils.OrderData.ORDER_4
@@ -11,8 +12,8 @@ import com.nrojiani.drone.testutils.TODAY
 import com.nrojiani.drone.utils.hoursToSeconds
 import com.nrojiani.drone.utils.minsToSeconds
 import org.junit.Test
-import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZonedDateTime
 import kotlin.test.assertEquals
 
 class OperatingHoursDeliveryTimeCalculatorTest {
@@ -24,14 +25,14 @@ class OperatingHoursDeliveryTimeCalculatorTest {
     private val orderBeforeOp = PendingDeliveryOrder(
         orderId = "WM005",
         destination = Coordinate(x = 1.0, y = 1.0),
-        orderPlacedDateTime = LocalDateTime.of(TODAY, LocalTime.parse("02:15:00")),
+        orderPlacedDateTime = ZonedDateTime.of(TODAY, LocalTime.parse("02:15:00"), UTC_ZONE_ID),
         transitTime = TransitTime(hoursToSeconds(2))
     )
 
     private val orderAfterOp = PendingDeliveryOrder(
         orderId = "WM006",
         destination = Coordinate(x = 1.0, y = 1.0),
-        orderPlacedDateTime = LocalDateTime.of(TODAY, LocalTime.parse("23:00:00")),
+        orderPlacedDateTime = ZonedDateTime.of(TODAY, LocalTime.parse("23:00:00"), UTC_ZONE_ID),
         transitTime = TransitTime(hoursToSeconds(2))
     )
 
@@ -40,7 +41,7 @@ class OperatingHoursDeliveryTimeCalculatorTest {
         // 06:11:50 -> 07:15:45 = 01:03:55
         val delivery = DroneDelivery(
             orderWithTransitTime = PENDING_ORDER_4,
-            timeOrderDelivered = LocalDateTime.of(ORDER_4.dateOrderPlaced, LocalTime.of(7, 15, 45))
+            timeOrderDelivered = ZonedDateTime.of(ORDER_4.dateOrderPlaced, LocalTime.of(7, 15, 45), UTC_ZONE_ID)
         )
 
         assertEquals(
@@ -54,7 +55,11 @@ class OperatingHoursDeliveryTimeCalculatorTest {
         // 06:11:50 on day 1 -> 07:15:45 on day 2 = 01:01:03:55
         val delivery = DroneDelivery(
             orderWithTransitTime = PENDING_ORDER_4,
-            timeOrderDelivered = LocalDateTime.of(ORDER_4.dateOrderPlaced.plusDays(1), LocalTime.of(7, 15, 45))
+            timeOrderDelivered = ZonedDateTime.of(
+                ORDER_4.dateOrderPlaced.plusDays(1),
+                LocalTime.of(7, 15, 45),
+                UTC_ZONE_ID
+            )
         )
 
         assertEquals(
@@ -68,7 +73,11 @@ class OperatingHoursDeliveryTimeCalculatorTest {
         // 06:11:50 on day 1 -> 07:15:45 on day 4 = 03:01:03:55
         val delivery = DroneDelivery(
             orderWithTransitTime = PENDING_ORDER_4,
-            timeOrderDelivered = LocalDateTime.of(ORDER_4.dateOrderPlaced.plusDays(3), LocalTime.of(7, 15, 45))
+            timeOrderDelivered = ZonedDateTime.of(
+                ORDER_4.dateOrderPlaced.plusDays(3),
+                LocalTime.of(7, 15, 45),
+                UTC_ZONE_ID
+            )
         )
         // 06:11:50 -> 22:00:00 = 15:48:10
         val day1 = 56890L
@@ -89,7 +98,7 @@ class OperatingHoursDeliveryTimeCalculatorTest {
         // open -> delivered      06:00:00 -> 08:00:00 = 02:00:00 => 7,200 s
         val delivery = DroneDelivery(
             orderWithTransitTime = orderBeforeOp,
-            timeOrderDelivered = LocalDateTime.of(ORDER_4.dateOrderPlaced, LocalTime.parse("08:00:00"))
+            timeOrderDelivered = ZonedDateTime.of(ORDER_4.dateOrderPlaced, LocalTime.parse("08:00:00"), UTC_ZONE_ID)
         )
         assertEquals(hoursToSeconds(2), dtCalculator.calculate(delivery))
     }
@@ -98,7 +107,11 @@ class OperatingHoursDeliveryTimeCalculatorTest {
     fun `calculateDeliveryTime - placed before operating hours & delivered next day`() {
         val delivery = DroneDelivery(
             orderWithTransitTime = orderBeforeOp,
-            timeOrderDelivered = LocalDateTime.of(ORDER_4.dateOrderPlaced.plusDays(1), LocalTime.parse("08:00:00"))
+            timeOrderDelivered = ZonedDateTime.of(
+                ORDER_4.dateOrderPlaced.plusDays(1),
+                LocalTime.parse("08:00:00"),
+                UTC_ZONE_ID
+            )
         )
         assertEquals(
             operatingHours.seconds + hoursToSeconds(2),
@@ -110,7 +123,11 @@ class OperatingHoursDeliveryTimeCalculatorTest {
     fun `calculateDeliveryTime - placed before operating hours & delivered multiple days later`() {
         val delivery = DroneDelivery(
             orderWithTransitTime = orderBeforeOp,
-            timeOrderDelivered = LocalDateTime.of(ORDER_4.dateOrderPlaced.plusDays(3), LocalTime.parse("08:00:00"))
+            timeOrderDelivered = ZonedDateTime.of(
+                ORDER_4.dateOrderPlaced.plusDays(3),
+                LocalTime.parse("08:00:00"),
+                UTC_ZONE_ID
+            )
         )
         assertEquals(
             (operatingHours.seconds * 3) + hoursToSeconds(2),
@@ -122,7 +139,11 @@ class OperatingHoursDeliveryTimeCalculatorTest {
     fun `calculateDeliveryTime - placed after operating hours & delivered next day`() {
         val delivery = DroneDelivery(
             orderWithTransitTime = orderAfterOp,
-            timeOrderDelivered = LocalDateTime.of(ORDER_4.dateOrderPlaced.plusDays(1), LocalTime.parse("08:00:00"))
+            timeOrderDelivered = ZonedDateTime.of(
+                ORDER_4.dateOrderPlaced.plusDays(1),
+                LocalTime.parse("08:00:00"),
+                UTC_ZONE_ID
+            )
         )
         assertEquals(hoursToSeconds(2), dtCalculator.calculate(delivery))
     }
@@ -131,7 +152,11 @@ class OperatingHoursDeliveryTimeCalculatorTest {
     fun `calculateDeliveryTime - placed after operating hours & delivered multiple days later`() {
         val delivery = DroneDelivery(
             orderWithTransitTime = orderAfterOp,
-            timeOrderDelivered = LocalDateTime.of(ORDER_4.dateOrderPlaced.plusDays(3), LocalTime.parse("08:00:00"))
+            timeOrderDelivered = ZonedDateTime.of(
+                ORDER_4.dateOrderPlaced.plusDays(3),
+                LocalTime.parse("08:00:00"),
+                UTC_ZONE_ID
+            )
         )
         assertEquals(
             hoursToSeconds(2) + (operatingHours.seconds * 2),

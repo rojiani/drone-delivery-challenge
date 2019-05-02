@@ -13,11 +13,13 @@ import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.provider
 import org.kodein.di.generic.singleton
+import java.time.Clock
 
 /**
- * Dependencies related to calculating and scheduling deliveries.
+ * Dependencies related to calculating and scheduling deliveries. The dependencies are constructed using the
+ * constraints defined in the problem (e.g., [DRONE_DELIVERY_OPERATING_HOURS], [DRONE_SPEED_BLOCKS_PER_SECOND]).
  */
-val deliverySchedulingModule = Kodein.Module("Delivery Scheduling Module") {
+val droneDeliverySchedulingModule = Kodein.Module("Delivery Scheduling Module") {
     bind<TransitTimeCalculator>() with provider {
         TransitTimeCalculator(DRONE_SPEED_BLOCKS_PER_SECOND)
     }
@@ -27,6 +29,6 @@ val deliverySchedulingModule = Kodein.Module("Delivery Scheduling Module") {
     }
 
     bind<DeliveryScheduler>() with singleton {
-        MinTransitTimeDeliveryScheduler()
+        MinTransitTimeDeliveryScheduler(DRONE_DELIVERY_OPERATING_HOURS, Clock.systemUTC())
     }
 }

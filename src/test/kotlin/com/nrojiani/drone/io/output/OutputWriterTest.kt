@@ -2,29 +2,31 @@ package com.nrojiani.drone.io.output
 
 import com.nrojiani.drone.io.OUTPUT_DIR
 import com.nrojiani.drone.model.delivery.DroneDelivery
+import com.nrojiani.drone.model.time.UTC_ZONE_ID
 import com.nrojiani.drone.testutils.OrderData
 import com.nrojiani.drone.testutils.TODAY
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import java.io.File
-import java.time.LocalDateTime
-import java.time.LocalTime
-import kotlin.test.assertEquals
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.time.LocalTime
+import java.time.ZonedDateTime
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class OutputWriterTest {
 
     private val scheduledDeliveries: List<DroneDelivery> = listOf(
-        DroneDelivery(OrderData.PENDING_ORDER_2, LocalDateTime.of(TODAY, LocalTime.parse("06:00:00"))),
-        DroneDelivery(OrderData.PENDING_ORDER_1, LocalDateTime.of(TODAY, LocalTime.parse("06:07:12"))),
-        DroneDelivery(OrderData.PENDING_ORDER_4, LocalDateTime.of(TODAY, LocalTime.parse("06:31:22"))),
-        DroneDelivery(OrderData.PENDING_ORDER_3, LocalDateTime.of(TODAY, LocalTime.parse("06:55:32")))
+        DroneDelivery(OrderData.PENDING_ORDER_2, ZonedDateTime.of(TODAY, LocalTime.parse("06:00:00"), UTC_ZONE_ID)),
+        DroneDelivery(OrderData.PENDING_ORDER_1, ZonedDateTime.of(TODAY, LocalTime.parse("06:07:12"), UTC_ZONE_ID)),
+        DroneDelivery(OrderData.PENDING_ORDER_4, ZonedDateTime.of(TODAY, LocalTime.parse("06:31:22"), UTC_ZONE_ID)),
+        DroneDelivery(OrderData.PENDING_ORDER_3, ZonedDateTime.of(TODAY, LocalTime.parse("06:55:32"), UTC_ZONE_ID))
     )
+
     private val nps: Double = 75.0
     private val outputDirPath = OUTPUT_DIR
     private lateinit var outputWriter: OutputWriter

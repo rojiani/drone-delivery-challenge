@@ -2,31 +2,31 @@ package com.nrojiani.drone.model.time
 
 import com.nrojiani.drone.utils.daysToSeconds
 import com.nrojiani.drone.utils.minsToSeconds
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.Duration
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
-import kotlin.test.assertEquals
+import java.time.ZonedDateTime
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class DateTimeIntervalTest {
+class ZonedDateTimeIntervalTest {
     private val startDate = LocalDate.of(2019, 4, 26)
-    private val positiveInterval = DateTimeInterval(
-        start = LocalDateTime.of(startDate, LocalTime.parse("07:00:00")),
+    private val positiveInterval = ZonedDateTimeInterval(
+        start = ZonedDateTime.of(startDate, LocalTime.parse("07:00:00"), UTC_ZONE_ID),
         duration = Duration.ofMinutes(30)
     )
-    private val zeroInterval = DateTimeInterval(
-        start = LocalDateTime.of(startDate, LocalTime.parse("07:00:00")),
+    private val zeroInterval = ZonedDateTimeInterval(
+        start = ZonedDateTime.of(startDate, LocalTime.parse("07:00:00"), UTC_ZONE_ID),
         duration = Duration.ofSeconds(0)
     )
-    private val singleDay = DateTimeInterval(
-        start = LocalDateTime.of(startDate, LocalTime.parse("00:00:00")),
+    private val singleDay = ZonedDateTimeInterval(
+        start = ZonedDateTime.of(startDate, LocalTime.parse("00:00:00"), UTC_ZONE_ID),
         duration = Duration.ofDays(1)
     )
-    private val negativeInterval = DateTimeInterval(
-        start = LocalDateTime.of(startDate, LocalTime.parse("07:30:00")),
+    private val negativeInterval = ZonedDateTimeInterval(
+        start = ZonedDateTime.of(startDate, LocalTime.parse("07:30:00"), UTC_ZONE_ID),
         duration = Duration.ofMinutes(-30)
     )
 
@@ -46,8 +46,8 @@ class DateTimeIntervalTest {
 
     @Test
     fun contains() {
-        val timeInRange = LocalDateTime.of(startDate, LocalTime.parse("07:15:00"))
-        val timeNotInRange = LocalDateTime.of(startDate, LocalTime.parse("07:45:00"))
+        val timeInRange = ZonedDateTime.of(startDate, LocalTime.parse("07:15:00"), UTC_ZONE_ID)
+        val timeNotInRange = ZonedDateTime.of(startDate, LocalTime.parse("07:45:00"), UTC_ZONE_ID)
         assertTrue(positiveInterval.contains(timeInRange))
         assertTrue(timeInRange in positiveInterval)
         assertFalse(positiveInterval.contains(timeNotInRange))
