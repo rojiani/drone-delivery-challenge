@@ -35,9 +35,6 @@ or
 
 After running the application, the output filepath will be printed to the console.
 
-To run with a specific delivery start time instead of the current system time:
-`$ ./gradlew run --args="-i /Users/nrojiani/IdeaProjects/drone-delivery-challenge/src/main/resources/input/test-input-1 -t 2019-05-03T06:00Z"`
-
 To run the unit tests:
 `$ ./gradlew test`
 
@@ -101,6 +98,9 @@ Following from _Assumption 1_, I'm assuming that the likelihood of recommending 
 5C. Contains only valid data (all order lines are in expected format)
 * Fail rather than ignore if invalid input
 5D. Assume orders are ordered from earliest order placement time to latest.
+
+**Assumption 7 - Start Time.**
+TODO - start at earliest delivery
 
 TODO: Other Assumptions:
 * Algorithm will always schedule to maximize NPS (not some other metric)

@@ -4,14 +4,6 @@ import com.nrojiani.drone.model.Coordinate
 import com.nrojiani.drone.model.delivery.TransitTime
 import com.nrojiani.drone.model.order.Order
 import com.nrojiani.drone.model.order.PendingDeliveryOrder
-import com.nrojiani.drone.testutils.Test1OrderData.ORDER_1
-import com.nrojiani.drone.testutils.Test1OrderData.ORDER_2
-import com.nrojiani.drone.testutils.Test1OrderData.ORDER_3
-import com.nrojiani.drone.testutils.Test1OrderData.ORDER_4
-import com.nrojiani.drone.testutils.Test1OrderData.PENDING_ORDER_1
-import com.nrojiani.drone.testutils.Test1OrderData.PENDING_ORDER_2
-import com.nrojiani.drone.testutils.Test1OrderData.PENDING_ORDER_3
-import com.nrojiani.drone.testutils.Test1OrderData.PENDING_ORDER_4
 import com.nrojiani.drone.utils.UTC_ZONE_ID
 import java.time.LocalDate
 import java.time.LocalTime
@@ -29,8 +21,18 @@ const val TEST_INPUT_FILEPATH =
 val ORIGIN = Coordinate(0, 0)
 
 @JvmField
-val TODAY: LocalDate = LocalDate.now()
+val TODAY: LocalDate = LocalDate.now(UTC_ZONE_ID)
 
+/**
+ * Since input has time but no date, for testing purposes this can be used for the date that
+ * an order was placed.
+ */
+@JvmField
+val TEST_ORDER_PLACED_DATE = LocalDate.of(2019, 4, 25)
+
+/**
+ * Matches test-input-1 file.
+ */
 object Test1OrderData {
     @JvmField
     val ORDER_1 = Order(
@@ -81,6 +83,9 @@ object Test1OrderData {
         listOf(PENDING_ORDER_2, PENDING_ORDER_1, PENDING_ORDER_4, PENDING_ORDER_3)
 }
 
+/**
+ * Matches test-input-2 file.
+ */
 object Test2OrderData {
     private val destination = Coordinate(x = 6.0, y = 8.0)
     private val orderPlaced = ZonedDateTime.parse("2019-05-02T21:00:00Z")

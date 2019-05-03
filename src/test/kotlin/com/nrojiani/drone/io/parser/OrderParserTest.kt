@@ -7,8 +7,6 @@ import com.nrojiani.drone.model.order.Order
 import com.nrojiani.drone.testutils.TEST_INPUT_FILEPATH
 import com.nrojiani.drone.testutils.TODAY
 import com.nrojiani.drone.testutils.Test1OrderData.ORDERS
-import com.nrojiani.drone.testutils.Test1OrderData.ORDER_1
-import com.nrojiani.drone.testutils.Test1OrderData.ORDER_2
 import com.nrojiani.drone.utils.UTC_ZONE_ID
 import org.junit.Test
 import java.time.LocalTime
@@ -30,14 +28,15 @@ class OrderParserTest {
     fun parseValidOrders() {
         val orders =
             listOf("WM001 N11W5 05:11:50", "WM002 S3E2 05:11:55", "WM998 W5N11 03:01:22", "WM998 W5N11 03:01:F")
-        val valid = com.nrojiani.drone.io.parser.parseValidOrders(orders)
-        assertEquals(listOf(ORDER_1, ORDER_2), valid)
+        val valid = parseValidOrders(orders)
+        assertEquals(ORDERS.take(2), valid)
     }
 
     @Test
     fun parseOrders() {
         assertEquals(
-            listOf(ORDER_1, ORDER_2), parseOrders(listOf("WM001 N11W5 05:11:50", "WM002 S3E2 05:11:55"))
+            ORDERS.take(2),
+            parseOrders(listOf("WM001 N11W5 05:11:50", "WM002 S3E2 05:11:55"))
         )
     }
 
