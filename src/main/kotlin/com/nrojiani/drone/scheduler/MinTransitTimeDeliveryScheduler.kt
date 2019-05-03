@@ -26,8 +26,6 @@ class MinTransitTimeDeliveryScheduler(
     override fun scheduleDeliveries(
         pendingOrders: List<PendingDeliveryOrder>
     ): List<DroneDelivery> {
-        // TODO require startTimeMode >= first order placed.
-
         if (pendingOrders.isEmpty()) return emptyList()
 
         val scheduled: MutableList<DroneDelivery> = ArrayList()

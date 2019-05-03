@@ -53,7 +53,7 @@ class SchedulingDelegateTest {
         )
     }
 
-    // TODO - test-input-3
+    // TODO: test-input-3
 
     @Test
     fun calculateFirstDeliveryStartTime() {

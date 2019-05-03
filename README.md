@@ -1,9 +1,12 @@
+
+---
 Drone Delivery Challenge
 ========================
 
 ## About ##
+This is a take-home project for an interview.
 
-### Overview ###
+### Language & Libraries ###
 The program is written in [Kotlin](https://kotlinlang.org). In case you are not familiar with Kotlin, it is a JVM language designed to be fully interoperable with Java. With Kotlin, you get the benefit of the Java ecosystem (e.g., libraries), but with [many additional language features](https://medium.com/@magnus.chatt/why-you-should-totally-switch-to-kotlin-c7bbde9e10d5) that greatly enhance productivity, safety, and expressiveness. It is now the [fastest-growing programming language](https://octoverse.github.com/projects#languages) used on GitHub. If you are not familiar with Kotlin, the syntax is fairly similar to Java, so hopefully it will not be too hard to understand, but if any parts are unclear I would be happy to explain them.
 
 Gradle is used as the build system. See Instructions below for how to run the application & its tests.
@@ -21,6 +24,7 @@ additionally it is using some common libraries (e.g., Mockito, JUnit)
 
 ## Instructions ##
 ### Importing into IntelliJ IDEA ###
+Refer to the [instructions here](https://www.jetbrains.com/help/idea/gradle.html#gradle_import).
 
 ### Running ###
 To run the application, you must have the following installed:
@@ -41,7 +45,20 @@ or
 
 After running the application, the output filepath will be printed to the console.
 
-Additional (optional) arguments:
+#### Arguments ####
+**Required Arguments**:
+Input filepath (absolute)
+```
+-i
+--input
+```
+
+**Additional (optional) arguments**:
+
+Verbose mode:
+```
+"-v", "--verbose"
+```
 
 Exit if input is invalid (by default, true). If false, any invalid lines are ignored and all valid lines are processed.
 ```
@@ -60,7 +77,6 @@ default: PermutationOptimizingDeliveryScheduler
 
 To run the unit tests:
 `$ ./gradlew test`
-
 
 ## Design ##
 ### Assumptions Made ###
@@ -97,7 +113,6 @@ Following from _Assumption 1_, I'm assuming that the likelihood of recommending 
 | Neutral   | `[1.5, 3.75)` | `[90, 225)` | `[5400, 13500)` |
 | Detractor |   `[3.75, ∞)` |  `[225, ∞)` |    `[13500, ∞)` | 
 
-
 **Assumption 4 - Delivery Time ignores non-operational hours**
 * For orders placed outside of drone operation hours, the delivery time is calculated by starting not at the time the order was placed, but rather the start time is at the start of the drone's operational hours.
     * Example: If an Order is placed at 22:05:00 and delivered the following day at 07:00:00, the delivery time is 1 hour (6 am - 7 am).
@@ -118,53 +133,56 @@ Following from _Assumption 1_, I'm assuming that the likelihood of recommending 
             * 1 hour on 1/1 (21:00-22:00), and 3 hours on 1/2 (06:00-09:00)
 
 **Assumption 6 - Input File.**  
-5A. Doesn't exceed 2GB
-5B. Is UTF-8 format
-5C. Contains only valid data (all order lines are in expected format)
-* Fail rather than ignore if invalid input
-5D. Assume orders are ordered from earliest order placement time to latest.
+5A. Doesn't exceed 2GB  
+5B. Is UTF-8 format  
+5C. Contains only valid data (all order lines are in expected format)  - invalid input can be skipped using the `--exitOnInvalidInput` flag.  
+5D. Assume orders are ordered from earliest order placement time to latest.  
 
-**Assumption 7 - Start Time.**
-TODO - start at earliest delivery
+**Assumption 7 - Start Time.**  
+When scheduling deliveries, there are different approaches we could take for establishing the first delivery start time:
 
-TODO: Other Assumptions:
-* Algorithm will always schedule to maximize NPS (not some other metric)
+1. Use the earliest order placed time. Given Assumption 5D, this would be the first order.
+2. Use the current time when the scheduler is run.
+3. Specify by command line argument.
+
+I initially implemented the schedulers using approach 2. However, this adds quite a bit of complexity to the implementation as well as tests. Furthermore, when exactly the scheduler(s) are run and how frequently are undetermined. Therefore I changed it to use Approach 2. It is reasonable to assume that the scheduler would be run frequently, as orders are received.
+
+**Assumption 8 - Optimization metric**  
+Algorithm will always schedule to maximize NPS (not some other metric)
+
+**Assumption 9 - Drone properties**  
 * Drone can only carry 1 package, & any single order can be fit completely in package.
     * Note that this isn't realistic. However, perhaps the input (the orders) are not all orders placed, but the subset of orders whose delivery can be fulfilled by drone - i.e., a separate service is used to produce this list of orders. 
-* Assume that drone can move in any direction at same rate of 1 block / min
+* Assume that drone can move in **any** direction at same rate of 1 block / min
     * Prompt only gives speed for horizontal & vertical, but no reason to think that the drone's movement is restricted.
     * 1 block = 1 grid unit
-* Assume that drone is constantly in motion at same speed.
+* Assume that drone is **constantly in motion at same speed**
     * For simplicity, ignore the following:
         * acceleration from static to max velocity.
         * time to ascend/descend in altitude to make delivery
         * time to pick up next package
     * These are not necessarily negligible for a realistic model.
 
-TODO DeliveryScheduler input all placed on same day.
-* Rationale: TODO
-
-TODO 6am-10pm UTC
+**Assumption 10 - all orders in input are all placed on same day**
+* Rationale:
+    * No date specified in input format
+    * presumably the scheduler is run frequently as orders are received.
 
 ### Design Decisions/Notes ###
 
-TODO
-* prompt has launch facility in center, but since that could change, designed not
-to rely on that. 
-* Drone speed is 1 vertical or horizontal grid block per minute.
-    * diagonal
-
-TODO In problem, town owns 1 drone. 
-* This would likely increase.
-* Operating hours could also change
-
 #### Potential Improvements ####
-TODO
 
-#### TODO ####
-
-TODO - Poll service
-* IRL, scheduler needs to poll some service to get newly placed orders with some frequency.
+* Modify input format to include date (not just time)
+* Modifying to support multiple launch facilities
+* Polling service:
+    * Currently orders are parsed from a file.
+        * Would be better to abstract away the source of the orders - could be from a remote service, from a local file or database, etc.
+    * Since we can expect orders to be placed at all times, the application should support polling for newly placed orders at a fixed interval (e.g., every minute)
+* Additional `DeliveryScheduler` implementations
+    * Currently 2 are provided:
+        * `MinTransitTimeDeliveryScheduler` - schedules by shortest delivery distance first.
+        * `PermutationOptimizingDeliveryScheduler` - schedules all permutations of the orders, and selects the delivery sequence with the maximum NPS (if multiple sequences have the same max, then select the sequence with the earliest final drone return time).
+        * the latter will find the optimal NPS, but does not scale well since permutation generation runs in factorial time.
 
 #### Architecture ####
 
@@ -225,7 +243,8 @@ TODO - Poll service
             └── utils/
                 ├── extensions/
                 │   ├── CollectionExtensions.kt
-                │   └── DateTimeExtensions.kt
+                │   ├── DateTimeExtensions.kt
+                │   └── DoubleExtensions.kt
                 ├── Mockable.kt
                 ├── TimeConstants.kt
                 └── TimeUtils.kt

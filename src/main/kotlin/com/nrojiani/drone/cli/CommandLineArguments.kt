@@ -27,8 +27,6 @@ class CommandLineArguments(parser: ArgParser) {
         help = "The DeliveryScheduler implementation to use, e.g., MinTransitTimeDeliveryScheduler"
     ).default("PermutationOptimizingDeliveryScheduler")
 
-    // TODO verbose mode
-
     val exitIfInvalid: Boolean = when {
         exitOnInvalidInput.isBlank() -> true
         exitOnInvalidInput.equals("true", ignoreCase = true) -> true

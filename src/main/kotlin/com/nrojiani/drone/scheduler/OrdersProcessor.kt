@@ -8,7 +8,7 @@ import com.nrojiani.drone.scheduler.calculator.TransitTimeCalculator
 
 /**
  * Processes & adds additional information to orders.
- * TODO - multiple launch facilities
+ * TODO: support multiple launch facilities
  */
 class OrdersProcessor(
     private val orders: List<Order>,

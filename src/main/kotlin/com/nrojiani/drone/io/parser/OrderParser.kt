@@ -60,7 +60,6 @@ internal fun parseOrder(orderInput: String): Order {
         )
 
     // Bundle time with today's date (for rollover)
-    // TODO - optimally the input should have both date & time
     val dateTime = ZonedDateTime.of(LocalDate.now(), time, UTC_ZONE_ID)
 
     return Order(orderId, coordinates, dateTime)
