@@ -33,51 +33,47 @@ class PermutationOptimizingDeliveryScheduler(
     ): List<DroneDelivery> {
         if (pendingOrders.isEmpty()) return emptyList()
 
-        val permutations: Set<List<PendingDeliveryOrder>> = pendingOrders.permutations()
-        val scheduledDeliveries: Map<List<PendingDeliveryOrder>, List<DroneDelivery>> = permutations.associateBy(
+        val deliveriesToNpsMap = pendingOrders.permutations().associateBy(
             keySelector = { it },
-            valueTransform = { permutation ->
-                scheduleAll(permutation)
-            }
-        )
-        val deliveriesToNpsMap = scheduledDeliveries.map { (perm, deliveries) ->
+            valueTransform = { permutation -> scheduleAll(permutation) }
+        ).map { (_, deliveries) ->
             deliveries to deliveriesProcessor.predictedRecommendationsFor(deliveries)
                 .run(::calculateNPS)
-        }
+        }.toMap()
 
         deliveriesToNpsMap.forEach { (deliveries, nps) ->
             println("order: ${deliveries.map { it.orderWithTransitTime.orderId }} => $nps")
         }
-        return deliveriesToNpsMap.maxBy { (deliveries, nps) -> nps }!!.first
+        return deliveriesToNpsMap.maxBy { (deliveries, nps) -> nps }!!.key
 
         // TODO: for ties, pick one with earliest final drone return time
-        }
-
-        /** Repeatedly process until all orders are scheduled. */
-        private fun scheduleAll(orders: List<PendingDeliveryOrder>): List<DroneDelivery> {
-            if (orders.isEmpty()) return emptyList()
-
-            val scheduled: MutableList<DroneDelivery> = ArrayList()
-            var timeFirstOrderPlaced = orders.first().dateTimeOrderPlaced
-            var deliveryStartTime = delegate.calculateFirstDeliveryStartTime(timeFirstOrderPlaced)
-
-            queuedOrders.addAll(orders)
-            do {
-                val (newlyScheduled, rollovers) = delegate.schedule(
-                    sortedOrders = queuedOrders,
-                    startTime = deliveryStartTime
-                )
-
-                scheduled.addAll(newlyScheduled)
-                queuedOrders.clear()
-                queuedOrders.addAll(rollovers)
-                deliveryStartTime = ZonedDateTime.of(
-                    deliveryStartTime.toLocalDate().plusDays(1),
-                    operatingHours.start.toLocalTime(),
-                    DEFAULT_ZONE_OFFSET
-                )
-            } while (queuedOrders.isNotEmpty())
-
-            return scheduled
-        }
     }
+
+    /** Repeatedly process until all orders are scheduled. */
+    private fun scheduleAll(orders: List<PendingDeliveryOrder>): List<DroneDelivery> {
+        if (orders.isEmpty()) return emptyList()
+
+        val scheduled: MutableList<DroneDelivery> = ArrayList()
+        var timeFirstOrderPlaced = orders.first().dateTimeOrderPlaced
+        var deliveryStartTime = delegate.calculateFirstDeliveryStartTime(timeFirstOrderPlaced)
+
+        queuedOrders.addAll(orders)
+        do {
+            val (newlyScheduled, rollovers) = delegate.schedule(
+                sortedOrders = queuedOrders,
+                startTime = deliveryStartTime
+            )
+
+            scheduled.addAll(newlyScheduled)
+            queuedOrders.clear()
+            queuedOrders.addAll(rollovers)
+            deliveryStartTime = ZonedDateTime.of(
+                deliveryStartTime.toLocalDate().plusDays(1),
+                operatingHours.start.toLocalTime(),
+                DEFAULT_ZONE_OFFSET
+            )
+        } while (queuedOrders.isNotEmpty())
+
+        return scheduled
+    }
+}

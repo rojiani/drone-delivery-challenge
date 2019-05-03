@@ -1,6 +1,5 @@
 package com.nrojiani.drone.cli
 
-import com.nrojiani.drone.scheduler.DeliveryScheduler
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.default
 

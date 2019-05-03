@@ -147,10 +147,10 @@ TODO In problem, town owns 1 drone.
 * This would likely increase.
 * Operating hours could also change
 
-#### TODO ####
+#### Potential Improvements ####
+TODO
 
-TODO - scheduling algorithm choice
-* Multiple options
+#### TODO ####
 
 TODO - Poll service
 * IRL, scheduler needs to poll some service to get newly placed orders with some frequency.
