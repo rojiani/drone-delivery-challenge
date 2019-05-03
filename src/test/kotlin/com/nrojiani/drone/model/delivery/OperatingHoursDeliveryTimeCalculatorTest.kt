@@ -5,8 +5,8 @@ import com.nrojiani.drone.model.DRONE_DELIVERY_OPERATING_HOURS
 import com.nrojiani.drone.model.order.PendingDeliveryOrder
 import com.nrojiani.drone.scheduler.calculator.DeliveryTimeCalculator
 import com.nrojiani.drone.scheduler.calculator.OperatingHoursDeliveryTimeCalculator
-import com.nrojiani.drone.testutils.OrderData.ORDER_4
-import com.nrojiani.drone.testutils.OrderData.PENDING_ORDER_4
+import com.nrojiani.drone.testutils.Test1OrderData.ORDER_4
+import com.nrojiani.drone.testutils.Test1OrderData.PENDING_ORDER_4
 import com.nrojiani.drone.testutils.TODAY
 import com.nrojiani.drone.utils.UTC_ZONE_ID
 import com.nrojiani.drone.utils.hoursToSeconds

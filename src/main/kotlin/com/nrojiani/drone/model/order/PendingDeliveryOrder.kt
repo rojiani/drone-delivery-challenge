@@ -12,6 +12,7 @@ data class PendingDeliveryOrder(val order: Order, val transitTime: TransitTime) 
 
     val orderId: String = order.orderId
     val dateOrderPlaced: LocalDate = order.orderPlacedDateTime.toLocalDate()
+    val dateTimeOrderPlaced: ZonedDateTime = order.orderPlacedDateTime
 
     /** Secondary constructor */
     constructor(

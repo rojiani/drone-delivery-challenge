@@ -6,9 +6,7 @@ import java.time.Clock
 import java.time.ZoneId
 import java.time.ZoneOffset
 
-/**
- * Use UTC clock as default.
- */
+/** Use UTC clock as default. */
 @JvmField
 val DEFAULT_CLOCK = Clock.systemUTC()
 

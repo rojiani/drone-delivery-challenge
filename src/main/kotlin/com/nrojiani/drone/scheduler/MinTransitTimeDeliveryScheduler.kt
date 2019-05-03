@@ -1,6 +1,5 @@
 package com.nrojiani.drone.scheduler
 
-import com.nrojiani.drone.model.DRONE_DELIVERY_OPERATING_HOURS
 import com.nrojiani.drone.model.delivery.DroneDelivery
 import com.nrojiani.drone.model.order.PendingDeliveryOrder
 import com.nrojiani.drone.model.time.TimeInterval
@@ -9,6 +8,8 @@ import com.nrojiani.drone.utils.Mockable
 import com.nrojiani.drone.utils.extensions.zoneOffset
 import java.time.Clock
 import java.time.ZonedDateTime
+import java.util.ArrayDeque
+import java.util.Queue
 
 /**
  * Schedules deliveries based on distance.
@@ -20,10 +21,9 @@ class MinTransitTimeDeliveryScheduler(
 ) : DeliveryScheduler {
 
     /**
-     * Orders that must be rescheduled because their delivery can't be completed within operating hours.
-     * Orders are sorted by transit time.
+     * Orders that are queued for scheduling.
      */
-    private var rolloverOrders: List<PendingDeliveryOrder> = ArrayList()
+    private val queuedOrders: Queue<PendingDeliveryOrder> = ArrayDeque()
 
     /**
      * Get the current time using the [clock] specified when creating an instance of this class.
@@ -31,26 +31,40 @@ class MinTransitTimeDeliveryScheduler(
      */
     internal val currentZonedDateTime = ZonedDateTime.now(clock)
 
-    override fun scheduleDeliveries(pendingOrders: List<PendingDeliveryOrder>): List<DroneDelivery> {
+    override fun scheduleDeliveries(
+        pendingOrders: List<PendingDeliveryOrder>,
+        startTime: ZonedDateTime?
+    ): List<DroneDelivery> {
+
+        // TODO require startTime >= first order placed.
+
         if (pendingOrders.isEmpty()) return emptyList()
 
         val scheduled: MutableList<DroneDelivery> = ArrayList()
         val sortedByTransitTime = ordersSortedByTransitTime(pendingOrders)
-        val earliestDeliveryStartTime = calculateFirstDeliveryStartTime()
+        var deliveryStartTime = startTime ?: calculateFirstDeliveryStartTime()
 
+
+        queuedOrders.addAll(sortedByTransitTime)
         do {
             val (newlyScheduled, rollovers) = schedule(
-                sortedOrders = sortedByTransitTime,
+                sortedOrders = queuedOrders,
                 startTime = ZonedDateTime.of(
-                    earliestDeliveryStartTime.toLocalDate(),
-                    DRONE_DELIVERY_OPERATING_HOURS.start.toLocalTime(),
+                    deliveryStartTime.toLocalDate(),
+                    deliveryStartTime.toLocalTime(),
                     clock.zone
                 )
             )
 
             scheduled.addAll(newlyScheduled)
-            rolloverOrders = rollovers
-        } while (rolloverOrders.isNotEmpty())
+            queuedOrders.clear()
+            queuedOrders.addAll(rollovers)
+            deliveryStartTime = ZonedDateTime.of(
+                deliveryStartTime.toLocalDate().plusDays(1),
+                operatingHours.start.toLocalTime(),
+                clock.zoneOffset
+            )
+        } while (queuedOrders.isNotEmpty())
 
         return scheduled
     }
@@ -66,6 +80,8 @@ class MinTransitTimeDeliveryScheduler(
             pendingDeliveryOrder.orderId.drop(2).toInt()
         }
 
+        // TODO thenBy orderPlacedDateTime
+
         return pendingOrders.sortedWith(comparator)
     }
 
@@ -79,7 +95,7 @@ class MinTransitTimeDeliveryScheduler(
      * @return A [SchedulingResult] consisting of the scheduled and unscheduled rollover orders
      */
     internal fun schedule(
-        sortedOrders: List<PendingDeliveryOrder>,
+        sortedOrders: Iterable<PendingDeliveryOrder>,
         startTime: ZonedDateTime
     ): SchedulingResult {
         var time: ZonedDateTime = startTime
@@ -109,7 +125,9 @@ class MinTransitTimeDeliveryScheduler(
     }
 
     /**
-     * TODO
+     * Use the current time (calculated using the specified [clock]) to calculate when the
+     * first delivery could be made - returns either the current time if during operating hours,
+     * or the start of the next delivery period (on the current or following day).
      */
     internal fun calculateFirstDeliveryStartTime(): ZonedDateTime {
         val currentTime: ZonedDateTime = currentZonedDateTime

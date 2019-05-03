@@ -1,7 +1,7 @@
 package com.nrojiani.drone.model
 
 import com.nrojiani.drone.model.delivery.DroneDelivery
-import com.nrojiani.drone.testutils.OrderData.PENDING_ORDER_1
+import com.nrojiani.drone.testutils.Test1OrderData.PENDING_ORDER_1
 import com.nrojiani.drone.testutils.TODAY
 import com.nrojiani.drone.utils.UTC_ZONE_ID
 import org.junit.Test

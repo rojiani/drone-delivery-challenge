@@ -40,6 +40,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
 
+    // Arrow
+    implementation "io.arrow-kt:arrow-core-data:$arrowVersion"
+
     // Kodein (Dependency Injection Framework)
     implementation "org.kodein.di:kodein-di-generic-jvm:$kodeinVersion"
 

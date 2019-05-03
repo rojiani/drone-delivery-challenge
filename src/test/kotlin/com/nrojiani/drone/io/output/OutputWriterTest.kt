@@ -2,7 +2,7 @@ package com.nrojiani.drone.io.output
 
 import com.nrojiani.drone.io.OUTPUT_DIR
 import com.nrojiani.drone.model.delivery.DroneDelivery
-import com.nrojiani.drone.testutils.OrderData
+import com.nrojiani.drone.testutils.Test1OrderData
 import com.nrojiani.drone.testutils.TODAY
 import com.nrojiani.drone.utils.UTC_ZONE_ID
 import org.junit.After
@@ -22,25 +22,25 @@ class OutputWriterTest {
 
     private val scheduledDeliveries: List<DroneDelivery> = listOf(
         DroneDelivery(
-            OrderData.PENDING_ORDER_2, ZonedDateTime.of(
+            Test1OrderData.PENDING_ORDER_2, ZonedDateTime.of(
                 TODAY, LocalTime.parse("06:00:00"),
                 UTC_ZONE_ID
             )
         ),
         DroneDelivery(
-            OrderData.PENDING_ORDER_1, ZonedDateTime.of(
+            Test1OrderData.PENDING_ORDER_1, ZonedDateTime.of(
                 TODAY, LocalTime.parse("06:07:12"),
                 UTC_ZONE_ID
             )
         ),
         DroneDelivery(
-            OrderData.PENDING_ORDER_4, ZonedDateTime.of(
+            Test1OrderData.PENDING_ORDER_4, ZonedDateTime.of(
                 TODAY, LocalTime.parse("06:31:22"),
                 UTC_ZONE_ID
             )
         ),
         DroneDelivery(
-            OrderData.PENDING_ORDER_3, ZonedDateTime.of(
+            Test1OrderData.PENDING_ORDER_3, ZonedDateTime.of(
                 TODAY, LocalTime.parse("06:55:32"),
                 UTC_ZONE_ID
             )

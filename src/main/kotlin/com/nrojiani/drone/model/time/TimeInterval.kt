@@ -17,10 +17,6 @@ data class TimeInterval(
     val endExclusive: OffsetTime = start.plus(duration)
     val offset: ZoneOffset = start.offset
 
-//    val localStartTime: LocalTime = start.toLocalTime()
-//    val localEndExclusiveTime: LocalTime = endExclusive.toLocalTime()
-//    val localTimes: Pair<LocalTime, LocalTime> = localStartTime to localEndExclusiveTime
-
     /**
      * Alternate constructor.
      */

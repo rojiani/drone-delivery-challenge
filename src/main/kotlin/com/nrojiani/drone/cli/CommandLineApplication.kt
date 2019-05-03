@@ -20,6 +20,9 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.provider
+import java.lang.RuntimeException
+import java.time.LocalTime
+import java.time.ZonedDateTime
 
 /**
  * Responsible for dependency injection & running the application.
@@ -46,14 +49,42 @@ class CommandLineApplication(private val args: Array<String>) : KodeinAware {
      */
     fun run() {
         val orders: List<Order> = parseOrdersFromFile(parsedArgs.inputFilepath)
+        println("orders: List<Order>")
+        orders.forEach {
+            println(it)
+        }
 
         // Calculates the distance and transit time for each order.
         val estimatedOrders: List<PendingDeliveryOrder> =
             OrdersProcessor(orders, transitTimeCalculator, DRONE_LAUNCH_FACILITY_LOCATION)
                 .calculateTransitTimes()
 
+        println("estimatedOrders: List<PendingDeliveryOrder>")
+        estimatedOrders.forEach {
+            println(it)
+        }
+        println()
+
+        println("estimatedOrders - transit times: List<TransitTime>")
+        estimatedOrders.forEach {
+            println(it.transitTime)
+        }
+        println()
+
         // Associate each order with metadata about delivery times.
         val deliveries: List<DroneDelivery> = scheduler.scheduleDeliveries(estimatedOrders)
+
+        println("deliveries: List<DroneDelivery>")
+        deliveries.forEach {
+            println(it)
+        }
+        println()
+
+        println("deliveries - timeOrderDelivered: List<ZonedDateTime>")
+        deliveries.forEach {
+            println(it.timeOrderDelivered)
+        }
+        println()
 
         // Maps each delivery to its delivery time, as calculated by the implementation of
         // DeliveryTimeCalculator.
@@ -61,9 +92,20 @@ class CommandLineApplication(private val args: Array<String>) : KodeinAware {
             keySelector = { it },
             valueTransform = deliveryTimeCalculator::calculate
         )
+        println("deliveryTimes: Map<DroneDelivery, Long>")
+        deliveryTimes.forEach { (k, v) ->
+            println("$k => $v")
+        }
+        println()
 
         // Produce a list of Promoter Scores
         val predictedRecommendations: List<PredictedRecommendation> = deliveryTimes.values.map(::fromDeliveryTime)
+        println("predictedRecommendations: List<PredictedRecommendation>")
+        predictedRecommendations.forEach {
+            println(it)
+        }
+        println()
+
 
         // Write output file
         OutputWriter(deliveries, calculateNPS(predictedRecommendations))

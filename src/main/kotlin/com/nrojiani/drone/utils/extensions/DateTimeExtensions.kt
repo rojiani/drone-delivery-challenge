@@ -24,16 +24,6 @@ import kotlin.math.abs
  */
 
 /**
- * Returns the [LocalDate] and [LocalTime] as a Pair
- *
- * Example:
- * ```
- * val (date, time) = myZonedDateTime.localDateAndTime
- * ```
- */
-val ZonedDateTime.localDateAndTime: Pair<LocalDate, LocalTime> get() = toLocalDate() to toLocalTime()
-
-/**
  * Returns the [LocalDate] and [OffsetTime] as a Pair
  *
  * Example:
@@ -54,6 +44,8 @@ val ZonedDateTime.dateAndTime: Pair<LocalDate, OffsetTime> get() = toLocalDate()
 val LocalDateTime.dateAndTime: Pair<LocalDate, LocalTime> get() = toLocalDate() to toLocalTime()
 
 /**
+ * TODO - unused
+ *
  * Returns the [LocalDate], [LocalTime], & [ZoneOffset] as a Triple
  *
  * Example:
@@ -65,6 +57,18 @@ val ZonedDateTime.dateTimeOffset: Triple<LocalDate, LocalTime, ZoneOffset>
     get() = Triple(
         toLocalDate(), toLocalTime(), offset
     )
+
+/**
+ * TODO - unused
+ *
+ * Returns the [LocalDate] and [LocalTime] as a Pair
+ *
+ * Example:
+ * ```
+ * val (date, time) = myZonedDateTime.localDateAndTime
+ * ```
+ */
+val ZonedDateTime.localDateAndTime: Pair<LocalDate, LocalTime> get() = toLocalDate() to toLocalTime()
 
 /**
  * Get the [ZoneOffset] from the Clock's [ZoneId].

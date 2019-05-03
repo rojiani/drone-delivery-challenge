@@ -1,10 +1,14 @@
 package com.nrojiani.drone.io.parser
 
+import arrow.core.Try
+import arrow.core.handleError
 import com.nrojiani.drone.model.Coordinate
 import com.nrojiani.drone.model.order.Order
-import com.nrojiani.drone.testutils.OrderData.ORDERS
 import com.nrojiani.drone.testutils.TEST_INPUT_FILEPATH
 import com.nrojiani.drone.testutils.TODAY
+import com.nrojiani.drone.testutils.Test1OrderData.ORDERS
+import com.nrojiani.drone.testutils.Test1OrderData.ORDER_1
+import com.nrojiani.drone.testutils.Test1OrderData.ORDER_2
 import com.nrojiani.drone.utils.UTC_ZONE_ID
 import org.junit.Test
 import java.time.LocalTime
@@ -12,6 +16,8 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeParseException
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class OrderParserTest {
 
@@ -21,20 +27,17 @@ class OrderParserTest {
     }
 
     @Test
+    fun parseValidOrders() {
+        val orders =
+            listOf("WM001 N11W5 05:11:50", "WM002 S3E2 05:11:55", "WM998 W5N11 03:01:22", "WM998 W5N11 03:01:F")
+        val valid = com.nrojiani.drone.io.parser.parseValidOrders(orders)
+        assertEquals(listOf(ORDER_1, ORDER_2), valid)
+    }
+
+    @Test
     fun parseOrders() {
         assertEquals(
-            listOf(
-                Order(
-                    orderId = "WM001",
-                    destination = Coordinate(-5, 11),
-                    orderPlacedDateTime = ZonedDateTime.of(TODAY, LocalTime.of(5, 11, 50), UTC_ZONE_ID)
-                ),
-                Order(
-                    orderId = "WM002",
-                    destination = Coordinate(2, -3),
-                    orderPlacedDateTime = ZonedDateTime.of(TODAY, LocalTime.of(5, 11, 55), UTC_ZONE_ID)
-                )
-            ), parseOrders(listOf("WM001 N11W5 05:11:50", "WM002 S3E2 05:11:55"))
+            listOf(ORDER_1, ORDER_2), parseOrders(listOf("WM001 N11W5 05:11:50", "WM002 S3E2 05:11:55"))
         )
     }
 
@@ -50,6 +53,31 @@ class OrderParserTest {
     }
 
     @Test
+    fun `parseOrder with invalid coordinate`() {
+        assertFailsWith<OrderParsingException> {
+            parseOrder("WM001 E5N11 05:11:50")
+        }
+    }
+
+    @Test
+    fun `parseOrder with invalid timestamp`() {
+        assertFailsWith<OrderParsingException> {
+            parseOrder("WM001 N11W5 5:1:50")
+        }
+    }
+
+    @Test
+    fun tryParseCoordinates() {
+        assertEquals(Try.Success(Coordinate(-5, 11)), tryParseCoordinates("N11W5"))
+        assertEquals(Try.Success(Coordinate(2, -3)), tryParseCoordinates("S3E2"))
+        assertEquals(Try.Success(Coordinate(50, 7)), tryParseCoordinates("N7E50"))
+        assertEquals(Try.Success(Coordinate(5, 11)), tryParseCoordinates("N11E5"))
+
+        assertFalse(tryParseCoordinates("N11E5").isFailure())
+        assertTrue(tryParseCoordinates("E5N11").isFailure())
+    }
+
+    @Test
     fun parseRawCoordinates() {
         assertEquals(Coordinate(-5, 11), parseRawCoordinates("N11W5"))
         assertEquals(Coordinate(2, -3), parseRawCoordinates("S3E2"))
@@ -58,7 +86,7 @@ class OrderParserTest {
     }
 
     @Test
-    fun parseRawCoordinates_withInvalidInput_throwsException() {
+    fun `parseRawCoordinates with invalid input throws IllegalArgumentException`() {
         // Latitude before Longitude
         assertFailsWith<IllegalArgumentException> {
             parseRawCoordinates("E5N11")
@@ -82,24 +110,22 @@ class OrderParserTest {
 
     @Test
     fun parseTimestamp() {
-        assertEquals(LocalTime.of(0, 11, 50), parseTimestamp("00:11:50"))
-        assertEquals(LocalTime.of(5, 11, 50), parseTimestamp("05:11:50"))
-        assertEquals(LocalTime.of(13, 11, 50), parseTimestamp("13:11:50"))
-        assertEquals(LocalTime.of(23, 11, 50), parseTimestamp("23:11:50"))
+        assertEquals(Try.Success(LocalTime.of(0, 11, 50)), parseTimestamp("00:11:50"))
+        assertEquals(Try.Success(LocalTime.of(5, 11, 50)), parseTimestamp("05:11:50"))
+        assertEquals(Try.Success(LocalTime.of(13, 11, 50)), parseTimestamp("13:11:50"))
+        assertEquals(Try.Success(LocalTime.of(23, 11, 50)), parseTimestamp("23:11:50"))
     }
 
     @Test
-    fun parseTimestamp_withInvalidInput_throwsException() {
-        assertFailsWith<DateTimeParseException> {
-            parseTimestamp("24:11:50")
-        }
+    fun `parseTimestamp with invalid input throws DateTimeParseException`() {
+        assertTrue(parseTimestamp("24:11:50").isFailure())
+        assertTrue(parseTimestamp("0:11:50").isFailure())
+        assertTrue(parseTimestamp("-01:11:50").isFailure())
 
         assertFailsWith<DateTimeParseException> {
-            parseTimestamp("0:11:50")
-        }
-
-        assertFailsWith<DateTimeParseException> {
-            parseTimestamp("-01:11:50")
+            parseTimestamp("24:11:50").handleError { t ->
+                throw t
+            }
         }
     }
 }

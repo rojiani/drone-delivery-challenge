@@ -4,13 +4,18 @@ import com.nhaarman.mockitokotlin2.spy
 import com.nrojiani.drone.model.DRONE_DELIVERY_OPERATING_HOURS
 import com.nrojiani.drone.model.delivery.DroneDelivery
 import com.nrojiani.drone.model.time.TimeInterval
-import com.nrojiani.drone.testutils.OrderData.ORDERS_SORTED_BY_TRANSIT_TIMES
-import com.nrojiani.drone.testutils.OrderData.ORDERS_WITH_TRANSIT_TIMES
-import com.nrojiani.drone.testutils.OrderData.PENDING_ORDER_1
-import com.nrojiani.drone.testutils.OrderData.PENDING_ORDER_2
-import com.nrojiani.drone.testutils.OrderData.PENDING_ORDER_3
-import com.nrojiani.drone.testutils.OrderData.PENDING_ORDER_4
 import com.nrojiani.drone.testutils.TODAY
+import com.nrojiani.drone.testutils.Test1OrderData.ORDERS_SORTED_BY_TRANSIT_TIMES
+import com.nrojiani.drone.testutils.Test1OrderData.ORDERS_WITH_TRANSIT_TIMES
+import com.nrojiani.drone.testutils.Test1OrderData.PENDING_ORDER_1
+import com.nrojiani.drone.testutils.Test1OrderData.PENDING_ORDER_2
+import com.nrojiani.drone.testutils.Test1OrderData.PENDING_ORDER_3
+import com.nrojiani.drone.testutils.Test1OrderData.PENDING_ORDER_4
+import com.nrojiani.drone.testutils.Test2OrderData
+import com.nrojiani.drone.testutils.Test2OrderData.PENDING_ORDER_5
+import com.nrojiani.drone.testutils.Test2OrderData.PENDING_ORDER_6
+import com.nrojiani.drone.testutils.Test2OrderData.PENDING_ORDER_7
+import com.nrojiani.drone.testutils.Test2OrderData.PENDING_ORDER_8
 import com.nrojiani.drone.utils.EST_ZONE_ID
 import com.nrojiani.drone.utils.EST_ZONE_OFFSET
 import com.nrojiani.drone.utils.UTC_ZONE_ID
@@ -27,17 +32,36 @@ import kotlin.test.assertTrue
 
 class MinTransitTimeDroneDeliverySchedulerTest {
 
-    private val droneDeliveryScheduler = MinTransitTimeDeliveryScheduler(
+    private val day1 = LocalDate.of(2019, 4, 25)
+    private val day2 = LocalDate.of(2019, 4, 26)
+
+    private val beforeOpHoursUTC = ZonedDateTime.of(day1, LocalTime.of(5, 30, 0), UTC_ZONE_ID)
+    private val duringOpHoursUTC = ZonedDateTime.of(day1, LocalTime.of(12, 0, 0), UTC_ZONE_ID)
+    private val afterOpHoursUTC = ZonedDateTime.of(day1, LocalTime.of(23, 30, 0), UTC_ZONE_ID)
+
+    private val schedulerUTC = MinTransitTimeDeliveryScheduler(
         DRONE_DELIVERY_OPERATING_HOURS,
         Clock.systemUTC()
     )
 
-    private val day1 = LocalDate.of(2019, 4, 25)
-    private val day2 = LocalDate.of(2019, 4, 26)
+    // Use spy as partial mock to enable mocking the ZonedDateTime.now() call.
+    val spyScheduler = spy(schedulerUTC) {
+        on { it.currentZonedDateTime }
+            .thenReturn(beforeOpHoursUTC)
+            .thenReturn(duringOpHoursUTC)
+            .thenReturn(afterOpHoursUTC)
+    }
+
+    private val ordersWithRollovers = Test2OrderData.ORDERS_WITH_TRANSIT_TIMES
 
     @Test
-    fun scheduleDeliveries() {
-        val scheduled = droneDeliveryScheduler.scheduleDeliveries(ORDERS_WITH_TRANSIT_TIMES)
+    fun `scheduleDeliveries - all scheduled`() {
+        val timeFirstOrderPlaced = ORDERS_WITH_TRANSIT_TIMES.first().dateTimeOrderPlaced
+        val scheduler = spy(schedulerUTC) {
+            on { it.currentZonedDateTime }
+                .thenReturn(timeFirstOrderPlaced)
+        }
+        val scheduled = scheduler.scheduleDeliveries(ORDERS_WITH_TRANSIT_TIMES)
 
         // Deliveries are sorted by closest to furthest:
         assertEquals(
@@ -45,29 +69,73 @@ class MinTransitTimeDroneDeliverySchedulerTest {
             scheduled.map { it.orderWithTransitTime.orderId }
         )
 
-        // Expected delivery times
-        val expectedDeliveryTimes = EXPECTED_SCHEDULED_TODAY.map { it.timeOrderDelivered }
-        val actualDeliveryTimes = scheduled.map { it.timeOrderDelivered }
-        assertEquals(expectedDeliveryTimes, actualDeliveryTimes)
+        assertEquals(
+            scheduled.map { it.timeOrderDelivered },
+            EXPECTED_SCHEDULED_TODAY_INPUT_1.map { it.timeOrderDelivered }
+        )
 
-        // Everything
-        assertEquals(EXPECTED_SCHEDULED_TODAY, scheduled)
+        assertEquals(EXPECTED_SCHEDULED_TODAY_INPUT_1, scheduled)
     }
 
     @Test
-    fun schedule() {
+    fun `scheduleDeliveries - some rollovers`() {
+        // All orders placed at 21:00:00. Run scheduler at same time.
+        val timeOrdersPlaced = ordersWithRollovers.first().dateTimeOrderPlaced
+        val scheduler = spy(schedulerUTC) {
+            on { it.currentZonedDateTime }
+                .thenReturn(timeOrdersPlaced)
+        }
+        val scheduled = scheduler.scheduleDeliveries(Test2OrderData.ORDERS_WITH_TRANSIT_TIMES)
+
+        assertEquals(
+            listOf("WM005", "WM006", "WM007", "WM008"),
+            scheduled.map { it.orderWithTransitTime.orderId }
+        )
+
+        assertEquals(
+            EXPECTED_SCHEDULED_INPUT_2.map { it.timeOrderDelivered },
+            scheduled.map { it.timeOrderDelivered }
+        )
+
+        assertEquals(EXPECTED_SCHEDULED_INPUT_2, scheduled)
+    }
+
+    // TODO: test startTime param
+
+    @Test
+    fun `schedule - all scheduled`() {
         assertEquals(
             SchedulingResult(
-                scheduled = EXPECTED_SCHEDULED_TODAY,
+                scheduled = EXPECTED_SCHEDULED_TODAY_INPUT_1,
                 unscheduled = emptyList()
             ),
-            droneDeliveryScheduler.schedule(
+            spyScheduler.schedule(
                 ORDERS_SORTED_BY_TRANSIT_TIMES,
-                ZonedDateTime.of(
-                    TODAY, droneDeliveryScheduler.operatingHours.start.toLocalTime(),
-                    UTC_ZONE_ID
-                )
+                ZonedDateTime.of(TODAY, spyScheduler.operatingHours.start.toLocalTime(), UTC_ZONE_ID)
             )
+        )
+    }
+
+    @Test
+    fun `schedule - some rollovers`() {
+        // All orders placed at 21:00:00. Run scheduler at same time.
+        val timeOrdersPlaced = ordersWithRollovers.first().dateTimeOrderPlaced
+        val scheduler = spy(schedulerUTC) {
+            on { it.currentZonedDateTime }
+                .thenReturn(timeOrdersPlaced)
+        }
+
+        val schedulingResult = scheduler.schedule(
+            ordersWithRollovers,
+            timeOrdersPlaced
+        )
+
+        assertEquals(
+            SchedulingResult(
+                scheduled = EXPECTED_SCHEDULED_INPUT_2.dropLast(1),
+                unscheduled = listOf(PENDING_ORDER_8)
+            ),
+            schedulingResult
         )
     }
 
@@ -75,16 +143,12 @@ class MinTransitTimeDroneDeliverySchedulerTest {
     fun ordersSortedByTransitTime() {
         assertEquals(
             ORDERS_SORTED_BY_TRANSIT_TIMES,
-            droneDeliveryScheduler.ordersSortedByTransitTime(ORDERS_WITH_TRANSIT_TIMES)
+            schedulerUTC.ordersSortedByTransitTime(ORDERS_WITH_TRANSIT_TIMES)
         )
     }
 
     @Test
     fun `calculateFirstDeliveryStartTime - UTC`() {
-        val beforeOpHoursUTC = ZonedDateTime.of(day1, LocalTime.of(5, 30, 0), UTC_ZONE_ID)
-        val duringOpHoursUTC = ZonedDateTime.of(day1, LocalTime.of(12, 0, 0), UTC_ZONE_ID)
-        val afterOpHoursUTC = ZonedDateTime.of(day1, LocalTime.of(23, 30, 0), UTC_ZONE_ID)
-
         assertFalse(beforeOpHoursUTC in DRONE_DELIVERY_OPERATING_HOURS.toZonedDateTimeInterval(day1, day1))
         assertTrue(duringOpHoursUTC in DRONE_DELIVERY_OPERATING_HOURS.toZonedDateTimeInterval(day1, day1))
         assertFalse(afterOpHoursUTC in DRONE_DELIVERY_OPERATING_HOURS.toZonedDateTimeInterval(day1, day1))
@@ -161,7 +225,7 @@ class MinTransitTimeDroneDeliverySchedulerTest {
     }
 
     companion object {
-        private val EXPECTED_SCHEDULED_TODAY = listOf(
+        private val EXPECTED_SCHEDULED_TODAY_INPUT_1 = listOf(
             DroneDelivery(
                 PENDING_ORDER_2, ZonedDateTime.of(
                     TODAY, LocalTime.parse("06:03:36"),
@@ -188,11 +252,31 @@ class MinTransitTimeDroneDeliverySchedulerTest {
             )
         )
 
-//        private val EXPECTED_SCHEDULED_ORDER_DATE = EXPECTED_SCHEDULED_TODAY.map { delivery ->
-//            DroneDelivery(
-//                delivery.orderWithTransitTime,
-//                ZonedDateTime.of(DATE_ORDER_PLACED, delivery.timeOrderDelivered.toLocalTime(), UTC_ZONE_ID)
-//            )
-//        }
+        private val EXPECTED_SCHEDULED_INPUT_2 = listOf(
+            DroneDelivery(
+                PENDING_ORDER_5, ZonedDateTime.of(
+                    TODAY, LocalTime.parse("21:10:00"),
+                    UTC_ZONE_ID
+                )
+            ),
+            DroneDelivery(
+                PENDING_ORDER_6, ZonedDateTime.of(
+                    TODAY, LocalTime.parse("21:30:00"),
+                    UTC_ZONE_ID
+                )
+            ),
+            DroneDelivery(
+                PENDING_ORDER_7, ZonedDateTime.of(
+                    TODAY, LocalTime.parse("21:50:00"),
+                    UTC_ZONE_ID
+                )
+            ),
+            DroneDelivery(
+                PENDING_ORDER_8, ZonedDateTime.of(
+                    TODAY.plusDays(1), LocalTime.parse("06:10:00"),
+                    UTC_ZONE_ID
+                )
+            )
+        )
     }
 }

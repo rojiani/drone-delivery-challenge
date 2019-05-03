@@ -10,6 +10,7 @@ import java.io.FileNotFoundException
  * @param filePath The file's absolute path
  * @throws FileNotFoundException if the attempt to open file at [filePath] fails.
  */
+@Throws(FileNotFoundException::class)
 fun readFileLines(filePath: String): List<String> = File(filePath).readLines()
 
 const val PROJECT_DIR = "/Users/nrojiani/IdeaProjects/drone-delivery-challenge"
