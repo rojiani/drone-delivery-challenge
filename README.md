@@ -133,6 +133,7 @@ Following from _Assumption 1_, I'm assuming that the likelihood of recommending 
             * 1 hour on 1/1 (21:00-22:00), and 3 hours on 1/2 (06:00-09:00)
 
 **Assumption 6 - Input File.**  
+
 5A. Doesn't exceed 2GB  
 5B. Is UTF-8 format  
 5C. Contains only valid data (all order lines are in expected format)  - invalid input can be skipped using the `--exitOnInvalidInput` flag.  
