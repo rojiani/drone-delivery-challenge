@@ -15,7 +15,6 @@ import com.nrojiani.drone.testutils.Test2OrderData.PENDING_ORDER_7
 import com.nrojiani.drone.testutils.Test2OrderData.PENDING_ORDER_8
 import com.nrojiani.drone.utils.UTC_ZONE_ID
 import org.junit.Test
-import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZonedDateTime
 import kotlin.test.assertEquals
@@ -23,9 +22,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class MinTransitTimeDroneDeliverySchedulerTest {
-
-    private val day1 = LocalDate.of(2019, 4, 25)
-    private val day2 = LocalDate.of(2019, 4, 26)
 
     private val scheduler = MinTransitTimeDeliveryScheduler(DRONE_DELIVERY_OPERATING_HOURS)
 
@@ -44,16 +40,15 @@ class MinTransitTimeDroneDeliverySchedulerTest {
         // Expected delivery times
         assertEquals(
             scheduled.map { it.timeOrderDelivered },
-            EXPECTED_SCHEDULED_TODAY_INPUT_1.map { it.timeOrderDelivered }
+            EXPECTED_SCHEDULED_NO_ROLLOVER.map { it.timeOrderDelivered }
         )
 
-        assertEquals(EXPECTED_SCHEDULED_TODAY_INPUT_1, scheduled)
+        assertEquals(EXPECTED_SCHEDULED_NO_ROLLOVER, scheduled)
     }
 
     @Test
     fun `scheduleDeliveries - some rollovers`() {
         val scheduled = scheduler.scheduleDeliveries(Test2OrderData.ORDERS_WITH_TRANSIT_TIMES)
-
 
         assertEquals(
             listOf("WM005", "WM006", "WM007", "WM008"),
@@ -61,11 +56,11 @@ class MinTransitTimeDroneDeliverySchedulerTest {
         )
 
         assertEquals(
-            EXPECTED_SCHEDULED_INPUT_2.map { it.timeOrderDelivered },
+            EXPECTED_SCHEDULED_WITH_ROLLOVER.map { it.timeOrderDelivered },
             scheduled.map { it.timeOrderDelivered }
         )
 
-        assertEquals(EXPECTED_SCHEDULED_INPUT_2, scheduled)
+        assertEquals(EXPECTED_SCHEDULED_WITH_ROLLOVER, scheduled)
     }
 
     @Test
@@ -76,7 +71,7 @@ class MinTransitTimeDroneDeliverySchedulerTest {
 
         assertEquals(
             SchedulingResult(
-                scheduled = EXPECTED_SCHEDULED_TODAY_INPUT_1,
+                scheduled = EXPECTED_SCHEDULED_NO_ROLLOVER,
                 unscheduled = emptyList()
             ),
             scheduler.schedule(
@@ -92,16 +87,18 @@ class MinTransitTimeDroneDeliverySchedulerTest {
         val timeOrdersPlaced = ordersWithRollovers.first().dateTimeOrderPlaced
         val deliveryStartTime = scheduler.calculateFirstDeliveryStartTime(timeOrdersPlaced)
 
-        val schedulingResult = scheduler.schedule(ordersWithRollovers, timeOrdersPlaced)
+        val schedulingResult = scheduler.schedule(ordersWithRollovers, deliveryStartTime)
 
         assertEquals(
             SchedulingResult(
-                scheduled = EXPECTED_SCHEDULED_INPUT_2.dropLast(1),
+                scheduled = EXPECTED_SCHEDULED_WITH_ROLLOVER.dropLast(1),
                 unscheduled = listOf(PENDING_ORDER_8)
             ),
             schedulingResult
         )
     }
+
+    // TODO - test-input-3
 
     @Test
     fun ordersSortedByTransitTime() {
@@ -146,7 +143,7 @@ class MinTransitTimeDroneDeliverySchedulerTest {
     }
 
     companion object {
-        private val EXPECTED_SCHEDULED_TODAY_INPUT_1 = listOf(
+        private val EXPECTED_SCHEDULED_NO_ROLLOVER = listOf(
             DroneDelivery(
                 PENDING_ORDER_2, ZonedDateTime.of(
                     PENDING_ORDER_2.dateOrderPlaced, LocalTime.parse("06:03:36"),
@@ -173,7 +170,7 @@ class MinTransitTimeDroneDeliverySchedulerTest {
             )
         )
 
-        private val EXPECTED_SCHEDULED_INPUT_2 = listOf(
+        private val EXPECTED_SCHEDULED_WITH_ROLLOVER = listOf(
             DroneDelivery(
                 PENDING_ORDER_5, ZonedDateTime.of(
                     PENDING_ORDER_5.dateOrderPlaced, LocalTime.parse("21:10:00"),

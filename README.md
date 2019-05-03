@@ -35,6 +35,14 @@ or
 
 After running the application, the output filepath will be printed to the console.
 
+Additional (optional) arguments:
+
+Exit if input is invalid (by default, true). If false, any invalid lines are ignored and all valid lines are processed.
+```
+-x false
+--exitOnInvalidInput=false
+```
+
 To run the unit tests:
 `$ ./gradlew test`
 

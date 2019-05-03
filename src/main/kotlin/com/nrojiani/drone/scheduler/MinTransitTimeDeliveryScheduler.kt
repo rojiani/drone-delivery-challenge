@@ -32,9 +32,6 @@ class MinTransitTimeDeliveryScheduler(val operatingHours: TimeInterval) : Delive
         var timeFirstOrderPlaced = pendingOrders.first().dateTimeOrderPlaced
         var deliveryStartTime = calculateFirstDeliveryStartTime(timeFirstOrderPlaced)
 
-        // TODO
-        println("START TIME: $deliveryStartTime")
-
         queuedOrders.addAll(sortedByTransitTime)
         do {
             val (newlyScheduled, rollovers) = schedule(
@@ -84,10 +81,15 @@ class MinTransitTimeDeliveryScheduler(val operatingHours: TimeInterval) : Delive
         var time: ZonedDateTime = startTime
 
         val closingTime =
-            ZonedDateTime.of(startTime.toLocalDate(), operatingHours.endExclusive.toLocalTime(), DEFAULT_ZONE_OFFSET)
+            ZonedDateTime.of(time.toLocalDate(), operatingHours.endExclusive.toLocalTime(), DEFAULT_ZONE_OFFSET)
         val scheduled: MutableList<DroneDelivery> = ArrayList()
 
         sortedOrders.forEachIndexed { i, order ->
+            // if orderPlacedTime is after scheduling time, move scheduling time forward
+            if (order.dateTimeOrderPlaced > time) {
+                time = order.dateTimeOrderPlaced
+            }
+
             val delivery = DroneDelivery(
                 order,
                 timeOrderDelivered = time.plusSeconds(order.transitTime.sourceToDestinationTime)
@@ -114,9 +116,6 @@ class MinTransitTimeDeliveryScheduler(val operatingHours: TimeInterval) : Delive
         val deliveryHours = operatingHours.toZonedDateTimeInterval(
             timeFirstOrderPlaced.toLocalDate(), timeFirstOrderPlaced.toLocalDate()
         )
-        println("deliveryHours: $deliveryHours")
-        println("timeFirstOrderPlaced: $timeFirstOrderPlaced")
-
 
         return when {
             timeFirstOrderPlaced < deliveryHours.start -> deliveryHours.start

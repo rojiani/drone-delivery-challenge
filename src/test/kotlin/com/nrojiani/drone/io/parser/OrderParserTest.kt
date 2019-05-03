@@ -28,7 +28,7 @@ class OrderParserTest {
     fun parseValidOrders() {
         val orders =
             listOf("WM001 N11W5 05:11:50", "WM002 S3E2 05:11:55", "WM998 W5N11 03:01:22", "WM998 W5N11 03:01:F")
-        val valid = parseValidOrders(orders)
+        val valid = parseOrdersSkippingInvalid(orders)
         assertEquals(ORDERS.take(2), valid)
     }
 

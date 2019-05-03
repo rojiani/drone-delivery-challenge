@@ -45,7 +45,11 @@ class CommandLineApplication(private val args: Array<String>) : KodeinAware {
      * Run the application.
      */
     fun run() {
-        val orders: List<Order> = parseOrdersFromFile(parsedArgs.inputFilepath)
+        val orders: List<Order> = parseOrdersFromFile(
+            parsedArgs.inputFilepath,
+            parsedArgs.exitIfInvalid
+        )
+
         println("orders: List<Order>")
         orders.forEach {
             println(it)
