@@ -43,6 +43,12 @@ Exit if input is invalid (by default, true). If false, any invalid lines are ign
 --exitOnInvalidInput=false
 ```
 
+Scheduler to use:
+TODO
+```
+"-s", "--scheduler",
+```
+
 To run the unit tests:
 `$ ./gradlew test`
 

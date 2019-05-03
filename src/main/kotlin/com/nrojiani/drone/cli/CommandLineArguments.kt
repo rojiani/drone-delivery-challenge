@@ -1,5 +1,6 @@
 package com.nrojiani.drone.cli
 
+import com.nrojiani.drone.scheduler.DeliveryScheduler
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.default
 
@@ -17,6 +18,12 @@ class CommandLineArguments(parser: ArgParser) {
         help = "If true, application will exit if input contains invalid lines. Otherwise, invalid lines will be skipped."
     ).default("")
 
+    val schedulerName by parser.storing(
+        "-s", "--scheduler",
+        help = "The DeliveryScheduler implementation to use, e.g., MinTransitTimeDeliveryScheduler"
+    ).default("PermutationOptimizingDeliveryScheduler")
+
+    // TODO verbose mode
 
     val exitIfInvalid: Boolean = when {
         exitOnInvalidInput.isNullOrBlank() -> true

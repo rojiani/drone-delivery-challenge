@@ -13,7 +13,7 @@ enum class PredictedRecommendation(val deliveryTimeRange: LongRange) {
     DETRACTOR(13500L..Long.MAX_VALUE);
 
     /** Factory methods */
-    companion object {
+    companion object Factory {
         fun fromDeliveryTime(seconds: Long): PredictedRecommendation {
             require(seconds >= 0L) { "Invalid delivery time: $seconds (must be >= 0)" }
             return values().first { seconds in it.deliveryTimeRange }

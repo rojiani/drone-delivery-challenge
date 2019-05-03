@@ -40,7 +40,6 @@ internal fun parseOrdersSkippingInvalid(orderLines: List<String>): List<Order> {
     }.filterNotNull()
 }
 
-
 internal fun tryParseOrder(orderInput: String): Try<Order> = Try { parseOrder(orderInput) }
 
 /**

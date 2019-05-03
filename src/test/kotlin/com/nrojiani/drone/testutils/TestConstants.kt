@@ -1,6 +1,7 @@
 package com.nrojiani.drone.testutils
 
 import com.nrojiani.drone.model.Coordinate
+import com.nrojiani.drone.model.delivery.DroneDelivery
 import com.nrojiani.drone.model.delivery.TransitTime
 import com.nrojiani.drone.model.order.Order
 import com.nrojiani.drone.model.order.PendingDeliveryOrder
@@ -121,4 +122,60 @@ object Test2OrderData {
 
     @JvmField
     val ORDERS_SORTED_BY_TRANSIT_TIMES: List<PendingDeliveryOrder> = ORDERS_WITH_TRANSIT_TIMES
+
+    @JvmField
+    val EXPECTED_SCHEDULED_NO_ROLLOVER = listOf(
+        DroneDelivery(
+            Test1OrderData.PENDING_ORDER_2, ZonedDateTime.of(
+                Test1OrderData.PENDING_ORDER_2.dateOrderPlaced, LocalTime.parse("06:03:36"),
+                UTC_ZONE_ID
+            )
+        ),
+        DroneDelivery(
+            Test1OrderData.PENDING_ORDER_1, ZonedDateTime.of(
+                Test1OrderData.PENDING_ORDER_1.dateOrderPlaced, LocalTime.parse("06:19:17"),
+                UTC_ZONE_ID
+            )
+        ),
+        DroneDelivery(
+            Test1OrderData.PENDING_ORDER_4, ZonedDateTime.of(
+                Test1OrderData.PENDING_ORDER_4.dateOrderPlaced, LocalTime.parse("06:43:27"),
+                UTC_ZONE_ID
+            )
+        ),
+        DroneDelivery(
+            Test1OrderData.PENDING_ORDER_3, ZonedDateTime.of(
+                Test1OrderData.PENDING_ORDER_3.dateOrderPlaced, LocalTime.parse("07:46:01"),
+                UTC_ZONE_ID
+            )
+        )
+    )
+
+    @JvmField
+    val EXPECTED_SCHEDULED_WITH_ROLLOVER = listOf(
+        DroneDelivery(
+            PENDING_ORDER_5, ZonedDateTime.of(
+                PENDING_ORDER_5.dateOrderPlaced, LocalTime.parse("21:10:00"),
+                UTC_ZONE_ID
+            )
+        ),
+        DroneDelivery(
+            PENDING_ORDER_6, ZonedDateTime.of(
+                PENDING_ORDER_6.dateOrderPlaced, LocalTime.parse("21:30:00"),
+                UTC_ZONE_ID
+            )
+        ),
+        DroneDelivery(
+            PENDING_ORDER_7, ZonedDateTime.of(
+                PENDING_ORDER_7.dateOrderPlaced, LocalTime.parse("21:50:00"),
+                UTC_ZONE_ID
+            )
+        ),
+        DroneDelivery(
+            PENDING_ORDER_8, ZonedDateTime.of(
+                PENDING_ORDER_8.dateOrderPlaced.plusDays(1), LocalTime.parse("06:10:00"),
+                UTC_ZONE_ID
+            )
+        )
+    )
 }

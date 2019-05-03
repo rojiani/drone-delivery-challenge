@@ -4,13 +4,16 @@ package com.nrojiani.drone.di
 
 import com.nrojiani.drone.model.DRONE_DELIVERY_OPERATING_HOURS
 import com.nrojiani.drone.model.DRONE_SPEED_BLOCKS_PER_SECOND
+import com.nrojiani.drone.scheduler.DeliveriesProcessor
 import com.nrojiani.drone.scheduler.DeliveryScheduler
 import com.nrojiani.drone.scheduler.MinTransitTimeDeliveryScheduler
+import com.nrojiani.drone.scheduler.SchedulingDelegate
 import com.nrojiani.drone.scheduler.calculator.DeliveryTimeCalculator
 import com.nrojiani.drone.scheduler.calculator.OperatingHoursDeliveryTimeCalculator
 import com.nrojiani.drone.scheduler.calculator.TransitTimeCalculator
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
+import org.kodein.di.generic.instance
 import org.kodein.di.generic.provider
 import org.kodein.di.generic.singleton
 
@@ -27,7 +30,15 @@ val droneDeliverySchedulingModule = Kodein.Module("Delivery Scheduling Module") 
         OperatingHoursDeliveryTimeCalculator(DRONE_DELIVERY_OPERATING_HOURS)
     }
 
+    bind<SchedulingDelegate>() with provider {
+        SchedulingDelegate(DRONE_DELIVERY_OPERATING_HOURS)
+    }
+
     bind<DeliveryScheduler>() with singleton {
-        MinTransitTimeDeliveryScheduler(DRONE_DELIVERY_OPERATING_HOURS)
+        MinTransitTimeDeliveryScheduler(DRONE_DELIVERY_OPERATING_HOURS, instance())
+    }
+
+    bind<DeliveriesProcessor>() with provider {
+        DeliveriesProcessor(instance())
     }
 }

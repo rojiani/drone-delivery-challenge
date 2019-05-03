@@ -1,6 +1,11 @@
 package com.nrojiani.drone.model.time
 
-import java.time.*
+import java.time.Duration
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.OffsetTime
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 
 /**
  * Time interval with zoned times (date agnostic).
