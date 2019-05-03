@@ -29,7 +29,7 @@ val TODAY: LocalDate = LocalDate.now(UTC_ZONE_ID)
  * an order was placed.
  */
 @JvmField
-val TEST_ORDER_PLACED_DATE = LocalDate.of(2019, 4, 25)
+val TEST_ORDER_PLACED_DATE: LocalDate = LocalDate.of(2019, 4, 25)!!
 
 /**
  * Matches test-input-1 file.

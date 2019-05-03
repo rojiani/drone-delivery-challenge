@@ -9,8 +9,4 @@ package com.nrojiani.drone.model.delivery
 data class TransitTime(val transitTimeToDestination: Long) {
     val sourceToDestinationTime: Long
         get() = transitTimeToDestination
-
-    /** Travel time (in seconds) from source to destination and then back to source */
-    val roundTripTime: Long
-        get() = transitTimeToDestination * 2
 }

@@ -32,7 +32,7 @@ class MinTransitTimeDeliveryScheduler(
 
         val scheduled: MutableList<DroneDelivery> = ArrayList()
         val sortedByTransitTime = ordersSortedByTransitTime(pendingOrders)
-        var timeFirstOrderPlaced = pendingOrders.first().dateTimeOrderPlaced
+        val timeFirstOrderPlaced = pendingOrders.first().dateTimeOrderPlaced
         var deliveryStartTime = delegate.calculateFirstDeliveryStartTime(timeFirstOrderPlaced)
 
         queuedOrders.addAll(sortedByTransitTime)

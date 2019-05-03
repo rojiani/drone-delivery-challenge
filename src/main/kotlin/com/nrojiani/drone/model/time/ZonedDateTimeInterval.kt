@@ -2,13 +2,11 @@ package com.nrojiani.drone.model.time
 
 import com.nrojiani.drone.utils.extensions.secondsBetween
 import java.time.Duration
-import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 data class ZonedDateTimeInterval(val start: ZonedDateTime, val duration: Duration) {
 
     val endExclusive: ZonedDateTime = start.plus(duration)
-    val offset: ZoneOffset = start.offset
 
     /**
      * The number of seconds from [start] until [endExclusive].

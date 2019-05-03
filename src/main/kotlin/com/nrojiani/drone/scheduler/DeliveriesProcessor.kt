@@ -5,16 +5,8 @@ import com.nrojiani.drone.model.delivery.DroneDelivery
 import com.nrojiani.drone.scheduler.calculator.DeliveryTimeCalculator
 
 class DeliveriesProcessor(
-    val deliveryTimeCalculator: DeliveryTimeCalculator
+    private val deliveryTimeCalculator: DeliveryTimeCalculator
 ) {
-
-    /**
-     * Maps each delivery to its delivery time, as calculated by the implementation of [DeliveryTimeCalculator].
-     */
-    fun associateWithDeliveryTimes(deliveries: List<DroneDelivery>): Map<DroneDelivery, Long> = deliveries.associateBy(
-        keySelector = { it },
-        valueTransform = deliveryTimeCalculator::calculate
-    )
 
     fun predictedRecommendationsFor(deliveries: List<DroneDelivery>): List<PredictedRecommendation> =
         associateWithDeliveryTimes(deliveries)
@@ -22,4 +14,12 @@ class DeliveriesProcessor(
 
     fun predictedRecommendationsFor(deliveryTimesMap: Map<DroneDelivery, Long>): List<PredictedRecommendation> =
         deliveryTimesMap.values.map(PredictedRecommendation.Factory::fromDeliveryTime)
+
+    /**
+     * Maps each delivery to its delivery time, as calculated by the implementation of [DeliveryTimeCalculator].
+     */
+    private fun associateWithDeliveryTimes(deliveries: List<DroneDelivery>): Map<DroneDelivery, Long> = deliveries.associateBy(
+        keySelector = { it },
+        valueTransform = deliveryTimeCalculator::calculate
+    )
 }

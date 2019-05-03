@@ -12,7 +12,12 @@ class CommandLineArguments(parser: ArgParser) {
         help = "Absolute path to input file"
     )
 
-    val exitOnInvalidInput: String by parser.storing(
+    val verbose by parser.flagging(
+        "-v", "--verbose",
+        help = "enable verbose mode"
+    )
+
+    private val exitOnInvalidInput: String by parser.storing(
         "-x", "--exitOnInvalidInput",
         help = "If true, application will exit if input contains invalid lines. Otherwise, invalid lines will be skipped."
     ).default("")
@@ -25,7 +30,7 @@ class CommandLineArguments(parser: ArgParser) {
     // TODO verbose mode
 
     val exitIfInvalid: Boolean = when {
-        exitOnInvalidInput.isNullOrBlank() -> true
+        exitOnInvalidInput.isBlank() -> true
         exitOnInvalidInput.equals("true", ignoreCase = true) -> true
         else -> false
     }

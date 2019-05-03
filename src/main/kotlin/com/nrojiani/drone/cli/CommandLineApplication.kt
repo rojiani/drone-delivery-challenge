@@ -17,6 +17,7 @@ import com.nrojiani.drone.scheduler.PermutationOptimizingDeliveryScheduler
 import com.nrojiani.drone.scheduler.SchedulingDelegate
 import com.nrojiani.drone.scheduler.calculator.TransitTimeCalculator
 import com.nrojiani.drone.scheduler.calculator.calculateNPS
+import com.nrojiani.drone.utils.extensions.formatted
 import com.xenomachina.argparser.ArgParser
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -38,83 +39,112 @@ class CommandLineApplication(private val args: Array<String>) : KodeinAware {
         import(droneDeliverySchedulingModule)
     }
 
-    // Lazily properties (resolved by DI container)
+    // Lazily instantiated properties (resolved by DI container)
     private val parsedArgs: CommandLineArguments by instance()
     private val schedulingDelegate: SchedulingDelegate by instance()
-    private val scheduler: DeliveryScheduler by instance()
     private val transitTimeCalculator: TransitTimeCalculator by instance()
     private val deliveriesProcessor: DeliveriesProcessor by instance()
+
+    private var verboseModeEnabled: Boolean = false
 
     /**
      * Run the application.
      */
     fun run() {
-
-        val orders: List<Order> = parseOrdersFromFile(
-            parsedArgs.inputFilepath,
-            parsedArgs.exitIfInvalid
-        )
-
-//        println("orders: List<Order>")
-//        orders.forEach {
-//            println("${it.orderId} => placed @ ${it.orderPlacedDateTime}")
-//        }
-//        println()
-
-        // Calculates the distance and transit time for each order.
-        val estimatedOrders: List<PendingDeliveryOrder> =
-            OrdersProcessor(orders, transitTimeCalculator, DRONE_LAUNCH_FACILITY_LOCATION)
-                .calculateTransitTimes()
-
-//        println("estimatedOrders: List<PendingDeliveryOrder>")
-//        estimatedOrders.forEach {
-//            println(it)
-//        }
-//        println()
-
-//        println("estimatedOrders - transit times: List<TransitTime>")
-//        estimatedOrders.forEach {
-//            println(it.transitTime)
-//        }
-//        println()
+        verboseModeEnabled = parsedArgs.verbose
+        printArgumentsIfVerbose()
 
         val scheduler: DeliveryScheduler = when (parsedArgs.schedulerName) {
             "MinTransitTimeDeliveryScheduler" -> MinTransitTimeDeliveryScheduler(
                 DRONE_DELIVERY_OPERATING_HOURS, schedulingDelegate
             )
             else -> PermutationOptimizingDeliveryScheduler(
-                DRONE_DELIVERY_OPERATING_HOURS, schedulingDelegate, deliveriesProcessor
+                DRONE_DELIVERY_OPERATING_HOURS, schedulingDelegate, deliveriesProcessor, verboseModeEnabled
             )
         }
-        println("scheduler: ${scheduler::class}")
+
+        /* Parse Orders */
+        val orders: List<Order> = parseOrdersFromFile(
+            parsedArgs.inputFilepath,
+            parsedArgs.exitIfInvalid
+        )
+        printIterable(orders, "Parsed Orders - List<Order>:")
+        printIterable(orders, "Parsed Orders - orderIds:", "orderId") { it.orderId }
+
+        /* Calculates the distance and transit time for each order. */
+        val estimatedOrders: List<PendingDeliveryOrder> =
+            OrdersProcessor(orders, transitTimeCalculator, DRONE_LAUNCH_FACILITY_LOCATION)
+                .calculateTransitTimes()
+
+        printIterable(estimatedOrders, "Orders with Transit times calculated - List<PendingDeliveryOrder>:")
+        printIterable(
+            estimatedOrders,
+            "TransitTimes (1-Way, in seconds)",
+            "transitTime"
+        ) { it.transitTime.sourceToDestinationTime }
 
         // Associate each order with metadata about delivery times.
         val deliveries: List<DroneDelivery> = scheduler.scheduleDeliveries(estimatedOrders)
-
-//        println("deliveries: List<DroneDelivery>")
-//        deliveries.forEach {
-//            println(it)
-//        }
-//        println()
-
-//        println("deliveries data")
-//        println("id: placed / delivered / transit")
-//        deliveries.forEach {
-//            println("${it.orderWithTransitTime.orderId}: ${it.timeOrderPlaced} / ${it.timeOrderDelivered} / ${it.orderWithTransitTime.transitTime.sourceToDestinationTime}")
-//        }
-//        println()
+        printDeliveryTimes(deliveries)
 
         // Produce a list of Promoter Scores
         val predictedRecommendations: List<PredictedRecommendation> =
             deliveriesProcessor.predictedRecommendationsFor(deliveries)
-//        println("predictedRecommendations: List<PredictedRecommendation>")
-//        predictedRecommendations.forEach {
-//            println(it)
-//        }
-//        println()
+        printIfVerboseModeEnabled("List<PredictedRecommendations>: $predictedRecommendations")
 
         // Write output file
-        OutputWriter(deliveries, calculateNPS(predictedRecommendations))
-            .writeOutputFile()
+        OutputWriter(deliveries, calculateNPS(predictedRecommendations)).writeOutputFile()
+    }
+
+    private fun printDeliveryTimes(deliveries: List<DroneDelivery>) {
+        printIterable(
+            deliveries,
+            "Delivery Times:\n" +
+                    "\tid:       | Placed               | Drone Departed       | Delivered            | Returned ", ""
+        ) {
+            "id: %s | %s | %s | %s | %s".format(
+                it.orderWithTransitTime.orderId,
+                it.timeOrderPlaced.formatted,
+                it.timeDroneDeparted.formatted,
+                it.timeOrderDelivered.formatted,
+                it.timeDroneReturned.formatted
+            )
+        }
+    }
+
+    private fun printIfVerboseModeEnabled(msg: String, newline: Boolean = false) {
+        if (verboseModeEnabled) {
+            println(msg)
+        }
+        if (newline) println()
+    }
+
+    private fun <T> printIterable(elements: Iterable<T>, label: String) {
+        if (!verboseModeEnabled) return
+
+        println(label)
+        elements.forEach {
+            println(it)
+        }
+        println()
+    }
+
+    private fun <T, K> printIterable(elements: Iterable<T>, label: String, keyLabel: String, keySelector: (T) -> K) {
+        if (!verboseModeEnabled) return
+
+        println(label)
+        elements.forEach {
+            val beforeKey = "\t$keyLabel${if (keyLabel.isNotBlank()) ": " else ""}"
+            println("$beforeKey${keySelector(it)}")
+        }
+        println()
+    }
+
+    private fun printArgumentsIfVerbose() {
+        printIfVerboseModeEnabled("args: ${args.contentToString()}")
+        printIfVerboseModeEnabled("Verbose Mode (--verbose): On")
+        printIfVerboseModeEnabled("Input filepath (--input): ${parsedArgs.inputFilepath}")
+        printIfVerboseModeEnabled("Exit on invalid input (--exitOnInvalidInput): ${parsedArgs.exitIfInvalid}")
+        printIfVerboseModeEnabled("DeliveryScheduler (--scheduler): ${parsedArgs.schedulerName}")
     }
 }

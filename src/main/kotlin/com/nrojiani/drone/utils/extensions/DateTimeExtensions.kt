@@ -12,6 +12,7 @@ import java.time.OffsetTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.time.temporal.Temporal
 import kotlin.math.abs
@@ -103,3 +104,5 @@ fun LocalTime.secondsBetween(laterTime: LocalTime) = if (this < laterTime) {
  * Get the [ZoneOffset] from a [ZoneId].
  */
 fun ZoneId.toZoneOffset(): ZoneOffset = rules.getOffset(Instant.now())
+
+val ZonedDateTime.formatted: String get() = format(DateTimeFormatter.ISO_ZONED_DATE_TIME)

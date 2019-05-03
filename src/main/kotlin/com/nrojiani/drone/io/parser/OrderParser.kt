@@ -25,20 +25,15 @@ internal fun parseOrdersFromFile(filepath: String, exitOnInvalidInput: Boolean =
  * Map each order input line to an [Order] model object.
  * @throws OrderParsingException if invalid input in [orderLines].
  */
-internal fun parseOrders(orderLines: List<String>): List<Order> {
-    println("parseOrders")
-    return orderLines.map { parseOrder(it) }
-}
+internal fun parseOrders(orderLines: List<String>): List<Order> = orderLines.map { parseOrder(it) }
 
 /**
  * Map each order input line to an [Order] model object, ignoring invalid input.
  */
-internal fun parseOrdersSkippingInvalid(orderLines: List<String>): List<Order> {
-    println("parseOrdersSkippingInvalid")
-    return orderLines.fold(listOf<Order?>()) { acc, line ->
+internal fun parseOrdersSkippingInvalid(orderLines: List<String>): List<Order> =
+    orderLines.fold(listOf<Order?>()) { acc, line ->
         acc + tryParseOrder(line).getOrElse { null }
     }.filterNotNull()
-}
 
 internal fun tryParseOrder(orderInput: String): Try<Order> = Try { parseOrder(orderInput) }
 
