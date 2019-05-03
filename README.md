@@ -12,6 +12,7 @@ Libraries used:
 
 [Kodein](https://kodein.org/di/) - a Dependency Injection framework for Kotlin
 [Kotlin ArgParser](https://github.com/xenomachina/kotlin-argparser) - a simple CLI argument parsing library for Kotlin.
+[Arrow](https://arrow-kt.io) - Functional Programming library for Kotlin
 
 ## Instructions ##
 ### Importing into IntelliJ IDEA ###
@@ -55,6 +56,8 @@ default: PermutationOptimizingDeliveryScheduler
 To run the unit tests:
 `$ ./gradlew test`
 
+
+## Design ##
 ### Assumptions Made ###
 
 **Assumption 1 - Diagram Interpretation.**
@@ -157,3 +160,68 @@ TODO
 
 TODO - Poll service
 * IRL, scheduler needs to poll some service to get newly placed orders with some frequency.
+
+#### Architecture ####
+
+##### Package Overview #####
+
+|   Package   |                            Description                            |
+|:-----------:|:-----------------------------------------------------------------:|
+|    `cli`    |           Command-line related (e.g., argument parsing)           |
+|    `di`     |                       Dependency Injection                        |
+|    `io`     |                  Parsing Input & Writing Output                   |
+|   `model`   |                        Domain Model Layer                         |
+| `scheduler` | Classes related to calculating how deliveries should be scheduled |
+|   `utils`   |             Utility & Extension functions, Constants              | 
+
+```
+└── com/
+    └── nrojiani/
+        └── drone/
+            ├── cli/
+            │   ├── CommandLineApplication.kt
+            │   ├── CommandLineArguments.kt
+            │   └── Main.kt
+            ├── di/
+            │   └── DeliverySchedulingModule.kt
+            ├── io/
+            │   ├── output/
+            │   │   └── OutputWriter.kt
+            │   ├── parser/
+            │   │   ├── OrderParser.kt
+            │   │   └── OrderParsingException.kt
+            │   └── IO.kt
+            ├── model/
+            │   ├── delivery/
+            │   │   ├── DroneDelivery.kt
+            │   │   └── TransitTime.kt
+            │   ├── order/
+            │   │   ├── Order.kt
+            │   │   └── PendingDeliveryOrder.kt
+            │   ├── time/
+            │   │   ├── TimeInterval.kt
+            │   │   └── ZonedDateTimeInterval.kt
+            │   ├── Coordinate.kt
+            │   ├── Drone.kt
+            │   └── PredictedRecommendation.kt
+            ├── scheduler/
+            │   ├── calculator/
+            │   │   ├── DeliveryTimeCalculator.kt
+            │   │   ├── NPSCalculator.kt
+            │   │   ├── OperatingHoursDeliveryTimeCalculator.kt
+            │   │   └── TransitTimeCalculator.kt
+            │   ├── DeliveriesProcessor.kt
+            │   ├── DeliveryScheduler.kt
+            │   ├── MinTransitTimeDeliveryScheduler.kt
+            │   ├── OrdersProcessor.kt
+            │   ├── PermutationOptimizingDeliveryScheduler.kt
+            │   ├── SchedulingDelegate.kt
+            │   └── SchedulingResult.kt
+            └── utils/
+                ├── extensions/
+                │   ├── CollectionExtensions.kt
+                │   └── DateTimeExtensions.kt
+                ├── Mockable.kt
+                ├── TimeConstants.kt
+                └── TimeUtils.kt
+```
