@@ -10,9 +10,14 @@ Gradle is used as the build system. See Instructions below for how to run the ap
 
 Libraries used:
 
-[Kodein](https://kodein.org/di/) - a Dependency Injection framework for Kotlin
-[Kotlin ArgParser](https://github.com/xenomachina/kotlin-argparser) - a simple CLI argument parsing library for Kotlin.
-[Arrow](https://arrow-kt.io) - Functional Programming library for Kotlin
+| Library                                                             |                Description/Purpose                |
+|:------------------------------------------------------------------- |:-------------------------------------------------:|
+| [Kodein](https://kodein.org/di/)                                    |    a Dependency Injection framework for Kotlin    |
+| [Kotlin ArgParser](https://github.com/xenomachina/kotlin-argparser) | a simple CLI argument parsing library for Kotlin. |
+| [Arrow](https://arrow-kt.io)                                        |     Functional Programming library for Kotlin     |
+| [ktlint](https://ktlint.github.io)                                  |           Linting/Static Code Analysis            | 
+
+additionally it is using some common libraries (e.g., Mockito, JUnit)
 
 ## Instructions ##
 ### Importing into IntelliJ IDEA ###
