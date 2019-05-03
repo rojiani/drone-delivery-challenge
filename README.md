@@ -43,11 +43,14 @@ Exit if input is invalid (by default, true). If false, any invalid lines are ign
 --exitOnInvalidInput=false
 ```
 
-Scheduler to use:
-TODO
+Scheduler to use (which implementation of `DeliveryScheduler`):
 ```
-"-s", "--scheduler",
+-s <ClassName>
+--scheduler=<ClassName>
+
+default: PermutationOptimizingDeliveryScheduler
 ```
+`$ ./gradlew run --args="--input=/Users/nrojiani/IdeaProjects/drone-delivery-challenge/src/main/resources/input/test-input-3 --scheduler=MinTransitTimeDeliveryScheduler"`
 
 To run the unit tests:
 `$ ./gradlew test`
