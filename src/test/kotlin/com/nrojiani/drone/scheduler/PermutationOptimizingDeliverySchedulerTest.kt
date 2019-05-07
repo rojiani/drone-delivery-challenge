@@ -1,5 +1,6 @@
 package com.nrojiani.drone.scheduler
 
+import com.nrojiani.drone.io.VerboseLogger
 import com.nrojiani.drone.model.DRONE_DELIVERY_OPERATING_HOURS
 import com.nrojiani.drone.scheduler.calculator.OperatingHoursDeliveryTimeCalculator
 import org.junit.Ignore
@@ -13,10 +14,11 @@ class PermutationOptimizingDeliverySchedulerTest {
         deliveriesProcessor = DeliveriesProcessor(
             OperatingHoursDeliveryTimeCalculator(DRONE_DELIVERY_OPERATING_HOURS)
         ),
-        verboseModeEnabled = true
+        verboseLogger = VerboseLogger(true)
     )
 
     @Ignore("Unimplemented")
     @Test
-    fun `scheduleDeliveries - test input 1`() {}
+    fun `scheduleDeliveries - test input 1`() {
+    }
 }

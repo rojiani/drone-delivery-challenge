@@ -12,14 +12,15 @@ class DeliveriesProcessor(
         associateWithDeliveryTimes(deliveries)
             .run(::predictedRecommendationsFor)
 
-    fun predictedRecommendationsFor(deliveryTimesMap: Map<DroneDelivery, Long>): List<PredictedRecommendation> =
+    private fun predictedRecommendationsFor(deliveryTimesMap: Map<DroneDelivery, Long>): List<PredictedRecommendation> =
         deliveryTimesMap.values.map(PredictedRecommendation.Factory::fromDeliveryTime)
 
     /**
      * Maps each delivery to its delivery time, as calculated by the implementation of [DeliveryTimeCalculator].
      */
-    private fun associateWithDeliveryTimes(deliveries: List<DroneDelivery>): Map<DroneDelivery, Long> = deliveries.associateBy(
-        keySelector = { it },
-        valueTransform = deliveryTimeCalculator::calculate
-    )
+    private fun associateWithDeliveryTimes(deliveries: List<DroneDelivery>): Map<DroneDelivery, Long> =
+        deliveries.associateBy(
+            keySelector = { it },
+            valueTransform = deliveryTimeCalculator::calculate
+        )
 }
