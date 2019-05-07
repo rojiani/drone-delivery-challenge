@@ -193,7 +193,7 @@ Algorithm will always schedule to maximize NPS (not some other metric)
 - [ ] Modify input format to include date (not just time)
 - [ ] Modifying to support multiple launch facilities
 - [ ] Add `--help` flag.
-- [ ] Separate logging code (verbose)
+- [x] Separate logging code (verbose)
 - [ ] Add logger
 
 ### Architecture ###
